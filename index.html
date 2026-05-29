@@ -138,10 +138,11 @@
                     document.getElementById('player-name').innerText = profile.displayName.toUpperCase();
                 }
                 document.getElementById('loading').style.display = 'none';
-            } catch (err) {
-                console.error("LIFF Init Failed", err);
-                document.getElementById('loading').innerText = "LINK FAILED. PLEASE REOPEN.";
-            }
+           } catch (err) {
+    console.error("LIFF Init Failed", err);
+    // 這裡是關鍵：將錯誤訊息直接印在螢幕上
+    document.getElementById('loading').innerText = "ERROR: " + err.code + " - " + err.message;
+}
         }
 
         function selectClub(el) {
