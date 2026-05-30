@@ -19,6 +19,7 @@
         .dashboard-row { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 5px; }
         .thi-box { border: 2px solid #CCFF00; border-radius: 12px; padding: 6px; background: rgba(204, 255, 0, 0.05); text-align: center; width: 90px; height: 75px; display: flex; flex-direction: column; justify-content: center; }
         .player-box { border: 2px solid #00FFFF; border-radius: 12px; padding: 6px; background: rgba(0, 255, 255, 0.1); text-align: center; width: 90px; height: 75px; display: flex; flex-direction: column; justify-content: center; cursor: pointer; }
+        .player-box:active { transform: scale(0.95); background: rgba(0, 255, 255, 0.2); }
         .ivr-indicator { width: 115px; height: 115px; border-radius: 50%; border: 5px solid #00FFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; animation: pulse-cyan 2s infinite; background: rgba(0, 255, 255, 0.05); }
 
         /* --- AI 與 結算 --- */
@@ -37,12 +38,11 @@
         .btn-miss { background-color: #111; border: 2px solid #333; color: #FF6D00; font-size: 32px; }
         .btn-perfect { background: linear-gradient(135deg, #00FFFF, #008888); color: #000; font-size: 20px; }
 
-        /* --- 特殊頁面 (版權與結算) --- */
+        /* --- 特殊頁面 --- */
         #copyright-splash { background-color: #ffffff; color: #000; position: fixed; inset: 0; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; }
         #summary-view { background-color: #000; position: fixed; inset: 0; z-index: 2000; display: none; flex-direction: column; padding: 25px; overflow-y: auto; }
         .summary-grid-cell { aspect-ratio: 1/1; border: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0a0a0a; border-radius: 8px; font-size: 10px; color: #555; }
         .summary-grid-cell.hit { background: rgba(0, 255, 255, 0.15); border-color: #00FFFF; color: #00FFFF; }
-        
         .loading-overlay { background: rgba(0,0,0,1); position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 5000; }
     </style>
 </head>
@@ -50,7 +50,7 @@
 
     <div id="loading" class="loading-overlay text-cyan-400 font-bold tracking-widest text-base">SYNCING CLOUD...</div>
 
-    <!-- [主控制台介面] -->
+    <!-- [主介面] -->
     <div id="main-ui" class="flex flex-col h-full justify-between">
         <div class="flex flex-col">
             <div class="dashboard-row">
@@ -70,8 +70,8 @@
             </div>
 
             <div id="ai-box" class="mt-1">
-                <div id="ai-label" class="text-[#FF9100] text-[10px] font-black uppercase tracking-widest mb-1 px-4 pt-1">Tactical Coaching</div>
-                <div id="ai-text" class="text-base font-bold text-zinc-100 leading-tight px-4 pb-1">
+                <div id="ai-label" class="text-[#FF9100] text-[10px] font-black uppercase tracking-widest mb-1">Tactical Coaching</div>
+                <div id="ai-text" class="text-base font-bold text-zinc-100 leading-tight">
                     系統就緒。請開始記錄您的擊球，AI 將在此提供即時戰術指引。
                 </div>
             </div>
@@ -81,12 +81,10 @@
             </button>
         </div>
 
-        <!-- 底部操作區 -->
         <div class="flex flex-col">
             <button id="pressure-toggle" onclick="togglePressure()" class="stack-item pressure-btn tracking-[0.4em]">
                 🔥 PRESSURE MODE: OFF
             </button>
-            
             <div class="stack-item flex gap-1.5">
                 <button class="club-btn" data-key="DRIVER" onclick="selectClub(this)">DRIVER</button>
                 <button class="club-btn" data-key="FW" onclick="selectClub(this)">FW/HB</button>
@@ -94,8 +92,7 @@
                 <button class="club-btn" data-key="WEDGE" onclick="selectClub(this)">WEDGE</button>
                 <button class="club-btn" data-key="PUTTER" onclick="selectClub(this)">PUTTER</button>
             </div>
-
-            <div class="stack-item grid grid-cols-3 gap-2.5 w-full max-w-sm mx-auto">
+            <div class="stack-item grid grid-cols-3 gap-2.5 w-full max-w-sm mx-auto mb-2.5">
                 <div class="grid-cell" onclick="setIntent(0)">H.Draw</div>
                 <div class="grid-cell" onclick="setIntent(1)">High</div>
                 <div class="grid-cell" onclick="setIntent(2)">H.Fade</div>
@@ -106,7 +103,6 @@
                 <div class="grid-cell" onclick="setIntent(7)">Low</div>
                 <div class="grid-cell" onclick="setIntent(8)">L.Fade</div>
             </div>
-
             <div class="flex items-center w-full gap-3 mt-1">
                 <button onclick="sendShot(3, 2)" class="action-bar-item btn-miss active:scale-95">←</button>
                 <button onclick="sendShot(4, 4)" class="action-bar-item btn-perfect active:scale-95">PERFECT</button>
@@ -115,7 +111,7 @@
         </div>
     </div>
 
-    <!-- [版權聲明頁面] -->
+    <!-- [版權頁面] -->
     <div id="copyright-splash">
         <div class="w-32 h-32 border-4 border-[#1a365d] rounded-full flex items-center justify-center mb-8 mx-auto">
             <div class="text-[#1a365d] font-black text-xl tracking-tighter">TRUEHIT</div>
@@ -137,10 +133,10 @@
             <div id="heatmap-grid" class="grid grid-cols-3 gap-2 max-w-[240px] mx-auto"></div>
         </div>
         <div class="bg-zinc-900 rounded-2xl p-5 mb-8">
-            <p class="text-[#00FFFF] text-[10px] font-black uppercase mb-2 tracking-widest">AI 教練總結</p>
+            <p class="text-[#00FFFF] text-[10px] font-black uppercase mb-2 tracking-widest">AI 全場教練總結</p>
             <p id="grand-ai-text" class="text-base font-bold leading-relaxed text-zinc-200">正在處理...</p>
         </div>
-        <button onclick="liff.closeWindow()" class="w-full py-4 rounded-2xl bg-white text-black font-black text-sm tracking-widest">返回 LINE 聊天室</button>
+        <button onclick="liff.closeWindow()" class="w-full py-4 rounded-2xl bg-white text-black font-black text-sm tracking-widest">返回 LINE</button>
     </div>
 
     <script>
@@ -194,18 +190,10 @@
             if (window.navigator.vibrate) window.navigator.vibrate(30);
         }
 
-        function selectClub(el) {
-            document.querySelectorAll('.club-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active'); currentClub = el.dataset.key;
-        }
+        function selectClub(el) { document.querySelectorAll('.club-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); currentClub = el.dataset.key; }
+        function setIntent(pos) { currentIntent = pos; document.querySelectorAll('.grid-cell').forEach((c, idx) => { idx === pos ? c.classList.add('active') : c.classList.remove('active'); }); }
 
-        function setIntent(pos) {
-            currentIntent = pos;
-            document.querySelectorAll('.grid-cell').forEach((c, idx) => {
-                idx === pos ? c.classList.add('active') : c.classList.remove('active');
-            });
-        }
-
+        // --- 強固通訊版 sendShot ---
         async function sendShot(missDir, missDeg) {
             if (window.navigator.vibrate) window.navigator.vibrate(50);
             const actualPos = missDir === 4 ? currentIntent : (missDir === 3 ? 3 : 5);
@@ -225,45 +213,35 @@
                     })
                 });
 
-                if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(`SERVER ${response.status}: ${errData.error || 'Check DB'}`);
-                }
+                const responseText = await response.text();
+                if (!responseText) throw new Error("Empty Response");
+                const result = JSON.parse(responseText);
 
-                const result = await response.json();
-                
-                // 更新頂部顯示 (v6.1 字串轉型處理)
+                if (!response.ok) throw new Error(result.error || `Server ${response.status}`);
+
                 document.getElementById('ivr-display').innerText = `${result.avgIvr}%`;
                 const thiVal = parseFloat(result.liveThi);
                 document.getElementById('thi-display').innerText = (thiVal >= 0 ? "+" : "") + result.liveThi;
                 
                 aiLabel.innerText = "TACTICAL COACHING";
-                if (parseInt(result.score) >= 100) aiText.innerText = "完美擊球！身體執行與意圖高度重合。請保持當下的擊球節奏。";
-                else if (missDir === 3) aiText.innerText = `偵測到左偏失誤。HDCP ${currentHdcp} 球員建議檢查握桿壓力，向右微調。`;
-                else if (missDir === 5) aiText.innerText = `偵測到右偏失誤。HDCP ${currentHdcp} 球員建議專注於平穩的重心轉移。`;
-                else aiText.innerText = "執行偏差已記錄。建議放慢上桿速度，在擊球前重新確立目標。";
+                if (parseInt(result.score) >= 100) aiText.innerText = "完美擊球！身體執行與意圖完全同步。請保持節奏。";
+                else if (missDir === 3) aiText.innerText = `偵測到左偏。HDCP ${currentHdcp} 球員建議檢查握桿，向右修正。`;
+                else if (missDir === 5) aiText.innerText = `偵測到右偏。HDCP ${currentHdcp} 球員建議專注重心轉移。`;
+                else aiText.innerText = "執行偏差已記錄。建議放慢上桿速度，在擊球前重新確立目標點。";
 
             } catch (err) { 
                 aiLabel.innerText = "DIAGNOSTIC ERROR";
-                aiText.innerText = `連線失敗: ${err.message}`; 
+                aiText.innerText = `連線異常: ${err.message}`; 
             }
         }
 
-        function startFinalizeFlow() {
-            if (sessionShots.length === 0) { alert("尚未記錄任何擊球數據。"); return; }
-            if (confirm("確定要結算本場球局嗎？")) {
-                document.getElementById('copyright-splash').style.display = 'flex';
-                setTimeout(showSummary, 2500);
-            }
-        }
+        function startFinalizeFlow() { if (sessionShots.length === 0) { alert("尚未記錄數據。"); return; } if (confirm("確定要結算本場球局嗎？")) { document.getElementById('copyright-splash').style.display = 'flex'; setTimeout(showSummary, 2500); } }
 
         function showSummary() {
             document.getElementById('copyright-splash').style.display = 'none';
             document.getElementById('summary-view').style.display = 'flex';
-            
             let stats = [0,0,0,0,0,0,0,0,0];
             sessionShots.forEach(s => { if(s.actual >= 0 && s.actual <= 8) stats[s.actual]++; });
-            
             const grid = document.getElementById('heatmap-grid');
             grid.innerHTML = '';
             const labels = ["H.Draw","High","H.Fade","Draw","CENTER","Fade","L.Draw","Low","L.Fade"];
@@ -273,21 +251,14 @@
                 cell.innerHTML = `<span class="font-black text-xs">${count}</span><span>${labels[i]}</span>`;
                 grid.appendChild(cell);
             });
-
             const grandAi = document.getElementById('grand-ai-text');
             const total = sessionShots.length;
             const leftCount = sessionShots.filter(s => s.actual === 0 || s.actual === 3 || s.actual === 6).length;
             const rightCount = sessionShots.filter(s => s.actual === 2 || s.actual === 5 || s.actual === 8).length;
-
-            if (leftCount > rightCount && leftCount > total * 0.4) {
-                grandAi.innerText = `今日呈現明顯的「左偏」傾向。HDCP ${currentHdcp} 的您應注意下桿轉身過早，下一場建議預設瞄準區向右偏移 5 碼。`;
-            } else if (rightCount > leftCount && rightCount > total * 0.4) {
-                grandAi.innerText = `今日偵測到穩定「右偏」慣性。通常是路徑由外向內，建議下一場專注於「重心平穩轉移」。`;
-            } else {
-                grandAi.innerText = `今日擊球分佈平均。同步穩定度良好，戰術失誤屬偶發。建議維持目前的預備流程。`;
-            }
+            if (leftCount > rightCount && leftCount > total * 0.4) grandAi.innerText = `今日呈現明顯「左偏」傾向。HDCP ${currentHdcp} 的您應注意下桿轉身，下一場預設瞄準區向右偏移。`;
+            else if (rightCount > leftCount && rightCount > total * 0.4) grandAi.innerText = `今日偵測到穩定「右偏」慣性。通常是路徑由外向內，建議下一場專注於「重心平穩轉移」。`;
+            else grandAi.innerText = `今日擊球分佈平均。同步穩定度良好，戰術失誤屬偶發。建議維持目前的預備流程。`;
         }
-
         initLiff();
     </script>
 </body>
