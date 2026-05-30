@@ -16,43 +16,46 @@
         body { 
             background-color: #000; color: #fff; font-family: 'Inter', sans-serif; 
             overflow: hidden; height: 100vh; display: flex; flex-direction: column; 
-            -webkit-tap-highlight-color: transparent; 
+            -webkit-tap-highlight-color: transparent; padding: 16px 20px;
         }
         
-        /* 1. 頂部三足鼎立儀表板 */
-        .dashboard-row { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 12px; }
-        
+        /* 1. 頂部儀表板 */
+        .dashboard-row { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 8px; }
         .thi-box {
             border: 2px solid #CCFF00; border-radius: 12px;
             padding: 6px; background: rgba(204, 255, 0, 0.05);
             text-align: center; width: 90px; height: 75px;
             display: flex; flex-direction: column; justify-content: center;
         }
-        
         .player-box {
             border: 2px solid #00FFFF; border-radius: 12px;
             padding: 6px; background: rgba(0, 255, 255, 0.05);
             text-align: center; width: 90px; height: 75px;
             display: flex; flex-direction: column; justify-content: center;
         }
-
         .ivr-indicator {
             width: 120px; height: 120px; border-radius: 50%; border: 5px solid #00FFFF;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             animation: pulse-cyan 2s infinite; background: rgba(0, 255, 255, 0.05);
         }
 
-        /* 2. 操作區域塔式堆疊 */
+        /* 2. AI 診斷方塊 (高度翻倍) */
+        #ai-box {
+            height: 115px; border-left: 6px solid #00FFFF;
+            background: linear-gradient(145deg, #111, #050505);
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 0 16px;
+        }
+
+        /* 3. 操作堆疊區 */
         .pressure-btn {
-            height: 65px; /* 1.5倍高度 */
-            background: #111; border: 1.5px solid #444; border-radius: 16px;
+            height: 65px; background: #111; border: 1.5px solid #444; border-radius: 16px;
             color: #666; transition: all 0.3s;
         }
         .pressure-btn.active {
             background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444;
             box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
         }
-
         .club-btn { 
             flex: 1; height: 58px; border: 1.5px solid #333; border-radius: 12px; 
             background: #0a0a0a; font-size: 11px; font-weight: 900; color: #666;
@@ -60,7 +63,7 @@
         .club-btn.active { border-color: #00FFFF; background: rgba(0, 255, 255, 0.15); color: #00FFFF; }
 
         .grid-cell { 
-            height: 54px; border: 2px solid #2a2a2a; border-radius: 14px;
+            height: 52px; border: 2px solid #2a2a2a; border-radius: 14px;
             display: flex; align-items: center; justify-content: center;
             font-size: 12px; font-weight: 900; background: #050505; color: #555;
         }
@@ -70,7 +73,7 @@
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.4); 
         }
 
-        /* 3. 底部結果列 */
+        /* 4. 置底操作列 */
         .action-bar-item {
             flex: 1; height: 75px; display: flex; align-items: center; justify-content: center;
             border-radius: 20px; font-weight: 900; transition: all 0.1s;
@@ -81,51 +84,50 @@
         .loading-overlay { background: rgba(0,0,0,1); position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 100; }
     </style>
 </head>
-<body class="px-5 py-4">
+<body class="flex flex-col justify-between">
 
     <div id="loading" class="loading-overlay text-cyan-400 font-bold tracking-widest text-base">SYNCING...</div>
 
-    <!-- 1. 頂部儀表板 -->
-    <div class="dashboard-row">
-        <!-- 左：Live THI (草黃綠) -->
-        <div class="thi-box">
-            <span class="text-zinc-500 text-[8px] font-black uppercase block">Live THI</span>
-            <span id="thi-display" class="text-2xl font-black text-lime-400">+1.2</span>
-        </div>
-        
-        <!-- 中：IVR sync (中心放大) -->
-        <div class="ivr-indicator">
-            <span class="text-[10px] font-black text-cyan-400 uppercase tracking-widest">IVR sync</span>
-            <span id="ivr-display" class="text-3xl font-black text-white">--%</span>
+    <!-- 頂部區塊 (HUD + AI + Finalize) -->
+    <div class="flex flex-col">
+        <div class="dashboard-row">
+            <div class="thi-box">
+                <span class="text-zinc-500 text-[8px] font-black uppercase block">Live THI</span>
+                <span id="thi-display" class="text-2xl font-black text-lime-400">+1.2</span>
+            </div>
+            <div class="ivr-indicator">
+                <span class="text-[10px] font-black text-cyan-400 uppercase tracking-widest">IVR sync</span>
+                <span id="ivr-display" class="text-3xl font-black text-white">--%</span>
+            </div>
+            <div class="player-box">
+                <div id="player-name" class="text-white text-[11px] font-black leading-tight truncate">PLAYER</div>
+                <div class="text-zinc-500 text-[8px] font-bold mt-1 uppercase tracking-tighter">HDCP</div>
+                <div class="text-cyan-400 text-sm font-black italic">15.0</div>
+            </div>
         </div>
 
-        <!-- 右：Name & HDCP (天藍) -->
-        <div class="player-box">
-            <div id="player-name" class="text-white text-[11px] font-black leading-tight truncate">PLAYER</div>
-            <div class="text-zinc-500 text-[8px] font-bold mt-1 uppercase tracking-tighter">HDCP</div>
-            <div class="text-cyan-400 text-sm font-black italic">15.0</div>
+        <div id="ai-box" class="mt-2 rounded-xl shadow-2xl">
+            <div id="ai-label" class="text-cyan-400 text-[10px] font-black uppercase tracking-widest mb-1">Diagnostic AI</div>
+            <div id="ai-text" class="text-base font-bold text-zinc-100 leading-tight">
+                準備就緒。請開始記錄，AI 將在此提供即時教練建議。
+            </div>
         </div>
+
+        <button onclick="finalizeRound()" class="w-full py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-600 font-black text-[9px] tracking-[0.2em] mt-3">
+            FINALIZE SESSION & SYNC DATA
+        </button>
     </div>
 
-    <!-- 2. AI 診斷與結算 (緊湊排列) -->
-    <div id="ai-box" class="mb-2 p-3 rounded-xl border-l-4 border-cyan-500 bg-zinc-900/50">
-        <div id="ai-text" class="text-sm font-bold text-zinc-100 leading-tight">請宣告壓力並選擇球桿。</div>
-    </div>
-    <button onclick="finalizeRound()" class="w-full py-2.5 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-600 font-black text-[9px] tracking-[0.2em] mb-4">
-        FINALIZE SESSION
-    </button>
-
-    <!-- 3. 操作塔式堆疊 (間距嚴格 10px) -->
-    <div class="flex flex-col flex-grow">
-        
-        <!-- 壓力層 (65px 高) -->
+    <!-- 底部操作堆疊 (間距嚴格 10px) -->
+    <div class="flex flex-col">
+        <!-- 壓力按鈕 -->
         <button id="pressure-toggle" onclick="togglePressure()" class="pressure-btn w-full font-black text-xs tracking-[0.4em]">
             🔥 PRESSURE MODE: OFF
         </button>
         
         <div class="h-[10px]"></div>
 
-        <!-- 球桿層 (放大文字，無圖示) -->
+        <!-- 球桿列 -->
         <div class="flex gap-1.5">
             <button class="club-btn" data-key="DRIVER" onclick="selectClub(this)">DRIVER</button>
             <button class="club-btn" data-key="FW" onclick="selectClub(this)">FW/HB</button>
@@ -136,7 +138,7 @@
 
         <div class="h-[10px]"></div>
 
-        <!-- 九宮格層 (壓縮高度) -->
+        <!-- 九宮格 -->
         <div class="grid grid-cols-3 gap-2.5 w-full max-w-sm mx-auto">
             <div class="grid-cell" onclick="setIntent(0)">H.Draw</div>
             <div class="grid-cell" onclick="setIntent(1)">High</div>
@@ -151,8 +153,8 @@
 
         <div class="h-[10px]"></div>
 
-        <!-- 底部結果確認 (平分寬度) -->
-        <div class="flex items-center w-full gap-3 mb-2">
+        <!-- 結果確認 (置底) -->
+        <div class="flex items-center w-full gap-3">
             <button onclick="sendShot(3, 2)" class="action-bar-item btn-miss active:scale-95">←</button>
             <button onclick="sendShot(4, 4)" class="action-bar-item btn-perfect active:scale-95">PERFECT</button>
             <button onclick="sendShot(5, 2)" class="action-bar-item btn-miss active:scale-95">→</button>
@@ -204,6 +206,9 @@
         async function sendShot(missDir, missDeg) {
             if (window.navigator.vibrate) window.navigator.vibrate(50);
             const aiText = document.getElementById('ai-text');
+            const aiLabel = document.getElementById('ai-label');
+            aiLabel.innerText = "ANALYZING...";
+
             try {
                 const response = await fetch(`${API_BASE}/calculate-score`, {
                     method: 'POST',
@@ -215,7 +220,22 @@
                 });
                 const result = await response.json();
                 document.getElementById('ivr-display').innerText = `${result.score}%`;
-                aiText.innerText = result.score >= 100 ? "意圖同步成功！" : "偏差已記錄。";
+                
+                // --- 智慧診斷教練引擎 ---
+                aiLabel.innerText = "COACHING ADVICE";
+                if (result.score >= 100) {
+                    aiText.innerText = "完美擊球！大腦意圖與身體完美同步。請記住這個揮桿節奏，保持專注。";
+                } else if (missDir === 3) {
+                    aiText.innerText = `偵測到 ${currentClub} 左偏失誤。這通常是握桿過緊或過早轉身，建議瞄準區向右微調。`;
+                } else if (missDir === 5) {
+                    aiText.innerText = `偵測到 ${currentClub} 右偏失誤。通常是路徑由外向內，請專注於重心平穩轉移。`;
+                } else {
+                    aiText.innerText = "執行偏差已記錄。建議放慢上桿速度，在擊球前重新視覺化您的目標線。";
+                }
+
+                if (isPressure && result.score < 80) {
+                    aiText.innerText = "壓力下同步率下滑。下一桿前請多做一次深呼吸，專注於動作過程而非結果。";
+                }
             } catch (err) { aiText.innerText = "連線失敗。"; }
         }
 
