@@ -14,7 +14,7 @@
         body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; padding: 12px 18px; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* 1. HUD 數據中心 */
+        /* 1. 主頁面 HUD 數據中心 */
         .dashboard-row { height: 90px; display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: 8px; flex-shrink: 0; }
         #thi-container { border: 2.5px solid #CCFF00; border-radius: 12px; padding: 4px; background: rgba(204, 255, 0, 0.05); text-align: center; width: 95px; height: 82px; display: flex; flex-direction: column; justify-content: center; transition: all 0.3s; }
         .thi-lost-border { border-color: #FF9100 !important; background: rgba(255, 145, 0, 0.05) !important; }
@@ -52,10 +52,10 @@
         #summary-view { background-color: #0d0d0d; position: fixed; inset: 0; z-index: 2000; display: none; flex-direction: column; padding: 25px; overflow-y: auto; }
         .summary-grid-cell { aspect-ratio: 1/1; border: 1.8px solid #444; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #050505; border-radius: 12px; font-size: 10px; color: #555; }
         .summary-grid-cell.hit { border-color: #00FFFF; background: rgba(0, 255, 255, 0.1); color: #00FFFF; }
-        .summary-grid-cell.center-hit { border-color: #CCFF00; background: #00FFFF; color: #000; box-shadow: 0 0 15px rgba(0,255,255,0.3); }
+        .summary-grid-cell.center-hit { background: #00FFFF; border-color: #FFFFFF; color: #000; box-shadow: 0 0 15px rgba(0,255,255,0.3); }
         
         .club-diag-card { background: rgba(255, 255, 255, 0.03); border: 1px solid #333; border-radius: 16px; padding: 18px; margin-bottom: 12px; }
-        .club-diag-title { color: #FF9100; font-size: 14px; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.05em; }
+        .club-diag-title { color: #FF9100; font-size: 14px; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; }
         .club-diag-text { color: #FFFFFF; font-size: 16px; font-weight: 700; line-height: 1.4; }
         
         .grand-ai-box { background: linear-gradient(to right, #1a1000, #000000); border-left: 4px solid #FF9100; padding: 22px; border-radius: 0 16px 16px 0; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -67,7 +67,7 @@
 </head>
 <body class="font-black">
 
-    <div id="loading" class="loading-overlay text-cyan-400 font-bold tracking-widest text-base uppercase">Syncing Master Terminal V7.7...</div>
+    <div id="loading" class="loading-overlay text-cyan-400 font-bold tracking-widest text-base uppercase">Syncing Master Terminal V7.6...</div>
 
     <!-- 1. HUD 數據中心 -->
     <div id="main-ui" class="flex flex-col h-full">
@@ -89,8 +89,8 @@
         </div>
 
         <div id="ai-box">
-            <div id="ai-label" class="text-[#FF9100] text-[10px] font-black uppercase tracking-widest mb-1">Diagnostic AI Coach</div>
-            <div id="ai-text" class="text-[14px] font-bold text-zinc-100 leading-tight text-center">系統就緒。請設定擊球意圖。</div>
+            <div id="ai-label" class="text-[#FF9100] text-[9px] font-black uppercase tracking-widest mb-1">Diagnostic AI Coach</div>
+            <div id="ai-text" class="text-[14px] font-bold text-zinc-100 leading-tight text-center">系統就緒。請選定意圖。</div>
         </div>
 
         <button onclick="startFinalizeFlow()" class="finalize-btn">🏁 FINALIZE SESSION & ANALYZE</button>
@@ -106,7 +106,7 @@
                 <button class="club-btn" data-key="PUTTER" onclick="selectClub(this)">PUTTER</button>
             </div>
             <div class="stack-gap"></div>
-            <div id="status-lamp" class="lamp-intent">PHASE A: 選擇意圖 (INTENT)</div>
+            <div id="status-lamp" class="lamp-intent">PHASE A: 選擇擊球意圖 (INTENT)</div>
             <div class="stack-gap"></div>
             <div class="grid-container">
                 <div id="intent-layer" class="grid-layer">
@@ -123,7 +123,7 @@
         </div>
     </div>
 
-    <!-- 戰報總結頁 -->
+    <!-- 戰報總結頁 (專業診斷旗艦版) -->
     <div id="summary-view">
         <div class="mb-8 border-b border-zinc-800 pb-4 text-left">
             <p class="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Official Diagnostic Report</p>
@@ -138,7 +138,7 @@
 
         <div id="club-diagnostics" class="space-y-4 mb-8"></div>
 
-        <div class="grand-ai-box shadow-2xl">
+        <div class="grand-ai-box">
             <p class="text-[#FF9100] text-[11px] font-black uppercase mb-2 tracking-widest text-center">AI 總教練綜合診斷 (戰術處方箋)</p>
             <p id="grand-ai-text" class="grand-ai-text"></p>
         </div>
@@ -146,10 +146,19 @@
         <button onclick="liff.closeWindow()" class="w-full py-5 rounded-2xl bg-white text-black font-black text-base tracking-widest uppercase mb-10 shadow-2xl active:bg-zinc-200 text-center">結束覆盤並返回 LINE</button>
     </div>
 
+    <!-- 版權聲明頁 -->
+    <div id="copyright-splash">
+        <div class="w-32 h-32 border-4 border-[#1a365d] rounded-full flex items-center justify-center mb-8 mx-auto"><div class="text-[#1a365d] font-black text-xl tracking-tighter text-center uppercase">TRUEHIT</div></div>
+        <h1 class="text-[#84cc16] text-2xl font-black mb-2 uppercase text-center">TrueHit™ Version 5.0</h1>
+        <h2 class="text-[#06b6d4] text-xl font-black mb-12 uppercase italic text-center">IVR™ (Intent vs Result™)</h2>
+        <div class="text-zinc-500 text-xs font-bold leading-relaxed text-center"><p>GolfCat / Po yun Chiu. All rights reserved.</p><p>Powered by Google MediaPipe AI.</p></div>
+        <div class="mt-12 text-zinc-400 text-sm animate-pulse tracking-[0.3em] text-center uppercase">Analyzing Mission Data...</div>
+    </div>
+
     <script>
         const API_BASE = "https://truehitcloud-production.up.railway.app";
         const LIFF_ID = "2010234920-mLFgwbeb";
-        let currentUserId = "anonymous", currentDisplayName = "PLAYER", currentHdcp = 15.0, avgIvr = 0;
+        let currentUserId = "anonymous", currentDisplayName = "PLAYER", currentHdcp = 15.0;
         let currentClub = "IRON", currentIntent = 4, isResultMode = false, isPressure = false, sessionShots = [];
 
         async function initLiff() {
@@ -166,6 +175,7 @@
             } catch (err) { document.getElementById('loading').innerText = "ERROR: " + err.message; }
         }
 
+        // --- 核心互動：影子九宮格 ---
         function handleIntent(id, name) { 
             currentIntent = id; 
             document.getElementById('ai-text').innerText = `意圖鎖定: ${name}。請擊球並記錄結果 (RESULT)。`; 
@@ -191,30 +201,21 @@
                 const text = await response.text();
                 if (response.ok && text) {
                     const res = JSON.parse(text);
-                    avgIvr = res.avgIvr;
-                    document.getElementById('ivr-display').innerText = `${avgIvr}%`;
+                    document.getElementById('ivr-display').innerText = `${res.avgIvr}%`;
                     const thiVal = parseFloat(res.liveThi);
                     document.getElementById('thi-display').innerText = (thiVal >= 0 ? "+" : "") + res.liveThi;
                     updateHUD(thiVal);
-                    // --- V7.7 重點：擬人化主頁即時戰略心態引擎 ---
-                    aiText.innerText = getDynamicMindsetCoaching(currentClub, resultId, avgIvr, isPressure);
+                    aiText.innerText = getCoachingAdvice(currentClub, resultId);
                 }
             } catch (err) { aiText.innerText = "連線異常，系統已記錄本地數據。"; }
             switchLayer(false);
         }
 
-        // --- V7.7 即時戰術心態引擎 ---
-        function getDynamicMindsetCoaching(club, result, ivr, pressure) {
-            if (result === 4) {
-                if (ivr >= 85) return `[心流狀態] ${currentDisplayName}，您的同步率極高。目前大腦與身體完全合一，建議在接下來的擊球採取更積極的進攻線路，大膽挑戰旗桿。`;
-                return `Pure Strike! 擊球節奏穩定，請內化剛才的肌肉感覺，守住目前的 Flow 狀態。`;
-            }
-            const isDrifting = ivr < 75;
-            if (pressure) return `壓力環境導致動作變形。請放下對桿數的焦慮，專注於 Pre-shot Routine，在頂點多停留 0.1 秒重置節奏感。`;
-            if (isDrifting) return `[戰略警示] 同步率下滑中。目前您的執行力呈現漂移，建議戰術轉向保守：瞄準果嶺中心或安全區域，直到手感回溫。`;
-            if (result === 1) return `力度過載判定。建議調整上桿幅度，優先確保觸球穩定性。`;
-            if (result === 7) return `動能流失判定。請確認下桿過程是否有無意識的減速收力。`;
-            return `執行偏差已記錄。建議針對 ${club} 放慢 10% 節奏，在擊球前重新確立目標點。`;
+        function getCoachingAdvice(club, result) {
+            if (result === 4) return "Pure Strike! 肌肉記憶已成功加載，請保持目前的節奏。";
+            if (result === 1) return `力度過載判定。建議調整上桿幅度，優先確保觸球穩定。`;
+            if (result === 7) return `動能流失判定。偵測到下桿減速，請專注於順滑的送桿過渡。`;
+            return `執行偏差已記錄。建議針對 ${club} 重新視覺化意圖。`;
         }
 
         function updateHUD(val) {
@@ -228,7 +229,7 @@
         async function fetchCloudProfile() { try { const r = await fetch(`${API_BASE}/get-profile/${currentUserId}`); const t = await r.text(); if (r.ok && t) { const d = JSON.parse(t); currentHdcp = parseFloat(d.hdcp); document.getElementById('player-hdcp').innerText = currentHdcp.toFixed(1); } } catch (e) {} }
         function promptHdcpUpdate() { const n = prompt("請輸入差點 (HDCP):", currentHdcp); if (n !== null && !isNaN(n)) { currentHdcp = parseFloat(n); document.getElementById('player-hdcp').innerText = currentHdcp.toFixed(1); updateProfileOnCloud(currentHdcp); } }
         async function updateProfileOnCloud(h) { try { await fetch(`${API_BASE}/update-profile`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lineUserId: currentUserId, displayName: currentDisplayName, hdcp: h }) }); } catch (e) {} }
-        function startFinalizeFlow() { if (sessionShots.length === 0) return; if (confirm("確定要結算本場球局並查看戰術分析嗎？")) { document.getElementById('copyright-splash').style.display = 'flex'; setTimeout(showSummary, 2500); } }
+        function startFinalizeFlow() { if (sessionShots.length === 0) return; if (confirm("確定要結算本場球局嗎？")) { document.getElementById('copyright-splash').style.display = 'flex'; setTimeout(showSummary, 2500); } }
 
         function showSummary() {
             document.getElementById('copyright-splash').style.display = 'none';
@@ -248,9 +249,9 @@
                 const cs = sessionShots.filter(s => s.club === club);
                 if (cs.length > 0) {
                     const l = cs.filter(s => s.result === 3).length, r = cs.filter(s => s.result === 5).length;
-                    let adv = "執行穩定，維持心流。"; 
+                    let adv = "執行穩定，維持節奏。"; 
                     if (l > r) adv = "桿面閉合過早判定。建議諮詢教練討論握桿與核心旋轉。"; 
-                    else if (r > l) adv = "路徑呈現由外向內。建議前往工坊確認 Lie Angle 設定。";
+                    else if (r > l) adv = "路徑呈現由外向內。建議前往工坊確認 Lie Angle 與桿身規格。";
                     const card = document.createElement('div'); card.className = "club-diag-card shadow-lg";
                     card.innerHTML = `<p class="club-diag-title">${club} ANALYSIS</p><p class="club-diag-text">${adv}</p>`;
                     dc.appendChild(card);
@@ -260,13 +261,27 @@
             // --- 旗艦級三方連動擬人化語法 (V7.6) ---
             const leftT = sessionShots.filter(s => s.result === 3).length, rightT = sessionShots.filter(s => s.result === 5).length;
             const longT = sessionShots.filter(s => s.result === 1).length, shortT = sessionShots.filter(s => s.result === 7).length;
-            const pShots = sessionShots.filter(s => s.isPressure), pFail = pShots.filter(s => s.result !== 4).length;
+            const pressureShots = sessionShots.filter(s => s.isPressure);
+            const pressureFail = pressureShots.filter(s => s.result !== 4).length;
+            
             let finalMsg = `今日執行同步率優異。建議維持目前的擊球準備程序 (Routine)，守住穩定的心流狀態。`;
 
-            if (pShots.length > 2 && pFail / pShots.length > 0.6) finalMsg = `今日存在顯著的「戰略決策失誤」。這代表在[您]壓力模式下，大腦對於目標的信任感流失。建議與[專業教練]建立強固的擊球儀式感。`;
-            else if (leftT > rightT && leftT > sessionShots.length * 0.35) finalMsg = `今日揭露了穩定的左偏技術慣性。這代表[您]的大腦程序啟動略早。建議諮詢[專業教練]優化下桿轉身遲延；若偏差依舊，應請[球具技師]確認底角。`;
-            else if (rightT > leftT && rightT > sessionShots.length * 0.35) finalMsg = `數據顯示路徑呈現明顯右偏。這通常與重心轉移延遲有關。建議諮詢[專業教練]優化路徑；同時應尋求[球具工坊]檢查握桿或桿身。`;
-            else if (Math.abs(longT - shortT) > sessionShots.length * 0.35) finalMsg = `數據顯示縱向誤差波動劇烈。建議諮詢[專業教練]確認動能延伸感；並請[球具工坊]檢查球桿平衡權重 (Swing Weight)。`;
+            // 1. 戰略失誤判定 (壓力模式)
+            if (pressureShots.length > 2 && pressureFail / pressureShots.length > 0.6) {
+                finalMsg = `今日存在顯著的「戰略決策失誤」。這代表在[您]壓力模式下，大腦對於目標的信任感流失。建議與[專業教練]建立強固的擊球儀式感，減少關鍵時刻的雜念。`;
+            } 
+            // 2. 技術失誤判定 (左偏)
+            else if (leftT > rightT && leftT > sessionShots.length * 0.35) {
+                finalMsg = `今日揭露了穩定的「左偏技術慣性」。這代表[您]的大腦下桿程序略快。建議諮詢[專業教練]優化核心旋轉時機；若偏差依舊，應請[球具技師]確認底角是否過陡導致桿面強迫閉合。`;
+            } 
+            // 3. 技術失誤判定 (右偏)
+            else if (rightT > leftT && rightT > sessionShots.length * 0.35) {
+                finalMsg = `數據顯示路徑呈現明顯「右偏向量」。這通常與重心轉移延遲有關。建議諮詢[專業教練]優化揮桿路徑；同時應尋求[球具工坊]協助，檢查握桿尺寸或桿身彈性是否匹配您的節奏。`;
+            }
+            // 4. 技術失誤判定 (距離)
+            else if (Math.abs(longT - shortT) > sessionShots.length * 0.35) {
+                finalMsg = `數據顯示「縱向誤差」波動劇烈。建議諮詢[專業教練]確認觸球瞬間的動能延伸感；並請[球具工坊]檢查球桿平衡權重 (Swing Weight)，以優化能量傳遞的一致性。`;
+            }
             
             document.getElementById('grand-ai-text').innerText = `${currentDisplayName.toUpperCase()}，今日戰術處方箋：${finalMsg}`;
         }
