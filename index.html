@@ -31,33 +31,37 @@
         .player-box { border: 2.2px solid #00FFFF; border-radius: 12px; padding: 4px; background: rgba(0, 255, 255, 0.1); text-align: center; width: 95px; height: 82px; display: flex; flex-direction: column; justify-content: center; cursor: pointer; }
         .ivr-indicator { width: 110px; height: 110px; border-radius: 50%; border: 6px solid #00FFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0, 255, 255, 0.05); flex-shrink: 0; }
 
-        /* 2. AI 教練區 (彈性適配) */
-        #ai-box { flex-grow: 1; min-height: 80px; border: 2px solid #FF9100; border-left: 8px solid #FF9100; border-radius: 14px; background: linear-gradient(145deg, #1a1000, #000000); display: flex; flex-direction: column; justify-content: center; padding: 12px 16px; margin-bottom: 10px; box-shadow: 0 4px 20px rgba(255,145,0,0.15); }
-        .finalize-btn { width: 100%; height: 32px; background-color: #0a0a0a; border: 1px solid #222; border-radius: 8px; color: #555; font-weight: 900; font-size: 8px; letter-spacing: 0.15em; margin-bottom: 10px; flex-shrink: 0; text-transform: uppercase; }
+        /* 2. AI 教練區 (高度彈性適配) */
+        #ai-box { flex-grow: 1; min-height: 80px; border: 2px solid #FF9100; border-left: 8px solid #FF9100; border-radius: 14px; background: linear-gradient(145deg, #1a1000, #000000); display: flex; flex-direction: column; justify-content: center; padding: 12px 16px; margin-bottom: 8px; box-shadow: 0 4px 20px rgba(255,145,0,0.15); }
+        .finalize-btn { width: 100%; height: 32px; background-color: #0a0a0a; border: 1px solid #222; border-radius: 8px; color: #555; font-weight: 900; font-size: 8px; letter-spacing: 0.15em; margin-bottom: 8px; flex-shrink: 0; text-transform: uppercase; }
 
         /* 3. 輸入堆疊區 (10px 間距) */
         .input-stack { display: flex; flex-direction: column; flex-shrink: 0; }
         .stack-gap { height: 10px; }
 
-        /* 第一層：壓力按鈕 (1.5x 高度) */
-        .pressure-btn { height: 65px; background: #111; border: 2px solid #333; border-radius: 16px; color: #FFFFFF; font-weight: 900; font-size: 14px; transition: all 0.3s; letter-spacing: 0.4em; text-transform: uppercase; }
+        /* 第一層：壓力按鈕 */
+        .pressure-btn { height: 60px; background: #111; border: 2px solid #333; border-radius: 16px; color: #FFFFFF; font-weight: 900; font-size: 14px; transition: all 0.3s; letter-spacing: 0.4em; text-transform: uppercase; }
         .pressure-btn.active { background: rgba(239, 68, 68, 0.3); border-color: #ef4444; animation: pulse-red 1.5s infinite; }
 
         /* 第二層：球桿列 */
-        .club-row { height: 55px; display: flex; gap: 6px; }
+        .club-row { height: 52px; display: flex; gap: 6px; }
         .club-btn { flex: 1; border: 1.5px solid #333; border-radius: 10px; background: #0a0a0a; font-size: 13px; font-weight: 900; color: #FF9100; }
         .club-btn.active { border-color: #00FFFF; background: #00FFFF; color: #000 !important; }
 
-        /* 第三層：狀態燈 */
-        #status-lamp { height: 40px; border-radius: 8px; font-weight: 900; font-size: 13px; letter-spacing: 0.25em; display: flex; align-items: center; justify-content: center; transition: all 0.3s; text-transform: uppercase; }
+        /* 第三層：狀態指示燈 (含操作指令) */
+        #status-lamp { height: 40px; border-radius: 8px; font-weight: 900; font-size: 12px; letter-spacing: 0.1em; display: flex; align-items: center; justify-content: center; transition: all 0.2s; text-transform: uppercase; }
         .lamp-intent { background: rgba(0, 255, 255, 0.3); border: 1.2px solid #00FFFF; color: #00FFFF; }
         .lamp-result { background: rgba(255, 145, 0, 0.4); border: 1.8px solid #FF9100; color: #FFFFFF; animation: pulse-orange 1.5s infinite; }
 
-        /* 第四層：兩階段向量九宮格 */
-        .grid-container { height: 215px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .grid-cell { border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; background: #050505; color: #FFFFFF; text-align: center; border: 2.2px solid #2a2a2a; transition: all 0.15s; }
+        /* 第四層：影子向量九宮格 */
+        .grid-container { height: 210px; position: relative; }
+        .grid-layer { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; transition: all 0.2s; }
+        .hidden { display: none !important; }
+        
+        .grid-cell { border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; background: #050505; color: #FFFFFF; text-align: center; border: 2.2px solid #2a2a2a; }
+        .grid-cell:active { transform: scale(0.95); }
         .grid-cell.active { background: #00FFFF; color: #000 !important; border-color: #00FFFF; box-shadow: 0 0 15px rgba(0, 255, 255, 0.3); }
-        .grid-cell.result-mode { border-color: #FF9100; color: #FFFFFF; }
+        .grid-cell.result-btn { border-color: #FF9100; color: #FFFFFF; }
         .grid-cell.perfect { background: linear-gradient(135deg, #FF9100, #FF6D00); border: none; font-size: 15px; color: #000 !important; }
         .grid-cell.disabled { opacity: 0.05; pointer-events: none; border: none; }
 
@@ -72,9 +76,9 @@
 </head>
 <body class="font-black">
 
-    <div id="loading" class="loading-overlay text-cyan-400 font-bold tracking-widest text-base uppercase">Syncing V6.6.1 Master...</div>
+    <div id="loading" class="loading-overlay text-cyan-400 font-bold tracking-widest text-base uppercase">Syncing V6.6.2 Systems...</div>
 
-    <!-- HUD 數據 -->
+    <!-- 1. HUD 數據中心 -->
     <div class="dashboard-row">
         <div id="thi-container">
             <span class="text-zinc-500 text-[8px] font-black uppercase tracking-tighter">THI INDEX</span>
@@ -97,24 +101,18 @@
         </div>
     </div>
 
-    <!-- AI 教練區 (彈性縮放) -->
+    <!-- 2. AI 教練診斷區 -->
     <div id="ai-box">
         <div id="ai-label" class="text-[#FF9100] text-[9px] font-black uppercase tracking-widest mb-1">Diagnostic AI Coach</div>
-        <div id="ai-text" class="text-[14px] font-bold text-zinc-100 leading-tight">請選擇擊球意圖 (INTENT)。</div>
+        <div id="ai-text" class="text-[14px] font-bold text-zinc-100 leading-tight">TrueHit™ 已準備就緒。</div>
     </div>
 
     <button onclick="startFinalizeFlow()" class="finalize-btn">🏁 FINALIZE SESSION & ANALYZE</button>
 
-    <!-- 輸入堆疊區 -->
+    <!-- 3. 輸入堆疊區 -->
     <div class="input-stack">
-        <!-- 1. 壓力按鈕 -->
-        <button id="pressure-toggle" onclick="togglePressure()" class="pressure-btn">
-            🔥 PRESSURE MODE: OFF
-        </button>
-
+        <button id="pressure-toggle" onclick="togglePressure()" class="pressure-btn">🔥 PRESSURE MODE: OFF</button>
         <div class="stack-gap"></div>
-
-        <!-- 2. 球桿列 -->
         <div class="club-row">
             <button class="club-btn" data-key="DRIVER" onclick="selectClub(this)">DRIVER</button>
             <button class="club-btn" data-key="FW" onclick="selectClub(this)">FW/HB</button>
@@ -122,57 +120,59 @@
             <button class="club-btn" data-key="WEDGE" onclick="selectClub(this)">WEDGE</button>
             <button class="club-btn" data-key="PUTTER" onclick="selectClub(this)">PUTTER</button>
         </div>
-
         <div class="stack-gap"></div>
-
-        <!-- 3. 狀態指示燈 -->
-        <div id="status-lamp" class="lamp-intent">PHASE A: INTENT MODE</div>
-
+        <div id="status-lamp" class="lamp-intent">PHASE A: 請選擇本次意圖 (INTENT)</div>
         <div class="stack-gap"></div>
-
-        <!-- 4. 向量九宮格 -->
-        <div id="vector-grid" class="grid-container"></div>
+        <div class="grid-container">
+            <!-- 意圖層 (Intent Layer) -->
+            <div id="intent-layer" class="grid-layer">
+                <div class="grid-cell" onclick="handleIntent(0)">H.Draw</div>
+                <div class="grid-cell" onclick="handleIntent(1)">High</div>
+                <div class="grid-cell" onclick="handleIntent(2)">H.Fade</div>
+                <div class="grid-cell" onclick="handleIntent(3)">Draw</div>
+                <div class="grid-cell" onclick="handleIntent(4)">CENTER</div>
+                <div class="grid-cell" onclick="handleIntent(5)">Fade</div>
+                <div class="grid-cell" onclick="handleIntent(6)">L.Draw</div>
+                <div class="grid-cell" onclick="handleIntent(7)">Low</div>
+                <div class="grid-cell" onclick="handleIntent(8)">L.Fade</div>
+            </div>
+            <!-- 結果層 (Result Layer) -->
+            <div id="result-layer" class="grid-layer hidden">
+                <div class="grid-cell disabled"></div>
+                <div class="grid-cell result-btn" onclick="handleResult(1)">TOO LONG</div>
+                <div class="grid-cell disabled"></div>
+                <div class="grid-cell result-btn" onclick="handleResult(3)">MISS LEFT</div>
+                <div class="grid-cell perfect" onclick="handleResult(4)">PERFECT</div>
+                <div class="grid-cell result-btn" onclick="handleResult(5)">MISS RIGHT</div>
+                <div class="grid-cell disabled"></div>
+                <div class="grid-cell result-btn" onclick="handleResult(7)">SHORT</div>
+                <div class="grid-cell disabled"></div>
+            </div>
+        </div>
     </div>
 
-    <!-- [版權聲明頁] -->
+    <!-- 版權頁面 -->
     <div id="copyright-splash">
-        <div class="w-32 h-32 border-4 border-[#1a365d] rounded-full flex items-center justify-center mb-8 mx-auto">
-            <div class="text-[#1a365d] font-black text-xl tracking-tighter">TRUEHIT</div>
-        </div>
+        <div class="w-32 h-32 border-4 border-[#1a365d] rounded-full flex items-center justify-center mb-8 mx-auto"><div class="text-[#1a365d] font-black text-xl tracking-tighter">TRUEHIT</div></div>
         <h1 class="text-[#84cc16] text-2xl font-black mb-2 uppercase">TrueHit™ Version 5.0</h1>
         <h2 class="text-[#06b6d4] text-xl font-black mb-12 uppercase italic">IVR™ (Intent vs Result™)</h2>
-        <div class="text-zinc-500 text-xs font-bold leading-relaxed">
-            <p>GolfCat/Po yun Chiu/. All rights reserved.</p>
-            <p>Diagnostic Powered by Google MediaPipe AI.</p>
-        </div>
+        <div class="text-zinc-500 text-xs font-bold leading-relaxed"><p>GolfCat/Po yun Chiu/. All rights reserved.</p><p>Powered by Google MediaPipe AI.</p></div>
         <div class="mt-12 text-zinc-400 text-sm animate-pulse tracking-[0.3em]">同步雲端數據分析中...</div>
     </div>
 
-    <!-- [結算報表頁] -->
+    <!-- 戰報頁面 -->
     <div id="summary-view">
-        <div class="mb-6">
-            <p class="text-zinc-500 text-[9px] font-black tracking-widest uppercase">Diagnostic Report</p>
-            <h1 class="text-white text-2xl font-black italic">THI™ <span class="text-[#CCFF00]">TrueHit™ Index</span></h1>
-            <div class="h-1 w-20 bg-[#CCFF00] mt-2"></div>
-        </div>
-        <div class="bg-zinc-900/50 rounded-2xl p-4 mb-4 border border-zinc-800 text-center">
-            <p class="text-zinc-500 text-[10px] font-black uppercase mb-4 tracking-widest">今日執行偏差分佈 (Heatmap)</p>
-            <div id="heatmap-grid" class="grid grid-cols-3 gap-2 max-w-[200px] mx-auto"></div>
-        </div>
+        <div class="mb-6"><p class="text-zinc-500 text-[9px] font-black tracking-widest uppercase">Diagnostic Report</p><h1 class="text-white text-2xl font-black italic">THI™ <span class="text-[#CCFF00]">TrueHit™ Index</span></h1><div class="h-1 w-20 bg-[#CCFF00] mt-2"></div></div>
+        <div class="bg-zinc-900/50 rounded-2xl p-4 mb-4 border border-zinc-800 text-center"><p class="text-zinc-500 text-[10px] font-black uppercase mb-4 tracking-widest">今日執行偏差分布 (Vector Heatmap)</p><div id="heatmap-grid" class="grid grid-cols-3 gap-2 max-w-[200px] mx-auto"></div></div>
         <div id="club-diagnostics" class="space-y-3 mb-6"></div>
-        <div class="bg-[#1a1000] border-l-4 border-[#FF9100] p-4 mb-8 rounded-r-xl">
-            <p id="grand-ai-text" class="text-base font-bold text-zinc-100"></p>
-        </div>
+        <div class="bg-[#1a1000] border-l-4 border-[#FF9100] p-4 mb-8"><p id="grand-ai-text" class="text-base font-bold text-zinc-100"></p></div>
         <button onclick="liff.closeWindow()" class="w-full py-4 rounded-2xl bg-white text-black font-black text-sm tracking-widest uppercase">CLOSE TERMINAL</button>
     </div>
 
     <script>
         const API_BASE = "https://truehitcloud-production.up.railway.app";
         let currentUserId = "anonymous", currentDisplayName = "PLAYER", currentHdcp = 15.0;
-        let currentClub = "IRON", currentIntent = 4, isResultMode = false, isPressure = false, sessionShots = [];
-
-        const intentLabels = ["H.Draw","High","H.Fade","Draw","CENTER","Fade","L.Draw","Low","L.Fade"];
-        const resultLabels = [null,"TOO LONG",null,"MISS LEFT","PERFECT","MISS RIGHT",null,"SHORT",null];
+        let currentClub = "IRON", currentIntent = 4, isPressure = false, sessionShots = [];
 
         async function initLiff() {
             try {
@@ -182,94 +182,87 @@
                     const profile = await liff.getProfile();
                     currentUserId = profile.userId; currentDisplayName = profile.displayName;
                     document.getElementById('player-name').innerText = currentDisplayName.toUpperCase();
-                    fetchCloudProfile(); renderGrid();
+                    fetchCloudProfile();
                 }
                 document.getElementById('loading').style.display = 'none';
             } catch (err) { document.getElementById('loading').innerText = "ERROR: " + err.message; }
         }
 
-        function togglePressure() {
-            isPressure = !isPressure;
-            const btn = document.getElementById('pressure-toggle');
-            btn.classList.toggle('active');
-            btn.innerText = isPressure ? "🔥 PRESSURE MODE: ON" : "🔥 PRESSURE MODE: OFF";
-            if (window.navigator.vibrate) window.navigator.vibrate(30);
+        // --- 核心互動：影子九宮格切換 ---
+        function handleIntent(id) {
+            currentIntent = id;
+            document.getElementById('ai-text').innerText = "正在記錄意圖... 請點擊執行結果。";
+            switchLayer(true);
         }
 
-        function renderGrid() {
-            const container = document.getElementById('vector-grid');
+        function switchLayer(isResult) {
+            const intentLayer = document.getElementById('intent-layer');
+            const resultLayer = document.getElementById('result-layer');
             const lamp = document.getElementById('status-lamp');
-            const aiText = document.getElementById('ai-text');
-            container.innerHTML = '';
             
-            if (!isResultMode) {
-                lamp.innerText = "PHASE A: INTENT SELECTION";
-                lamp.className = "lamp-intent";
-                aiText.innerText = "請選擇本次擊球預期的意圖 (INTENT)。";
-                intentLabels.forEach((label, i) => {
-                    const btn = document.createElement('div');
-                    btn.className = `grid-cell ${i === currentIntent ? 'active' : ''}`;
-                    btn.innerText = label;
-                    btn.onclick = () => { currentIntent = i; isResultMode = true; renderGrid(); };
-                    container.appendChild(btn);
-                });
-            } else {
-                lamp.innerText = "PHASE B: RESULT TRACKING";
+            if (isResult) {
+                intentLayer.classList.add('hidden');
+                resultLayer.classList.remove('hidden');
+                lamp.innerText = "PHASE B: 請記錄執行結果 (RESULT)";
                 lamp.className = "lamp-result";
-                aiText.innerText = `意圖已設定: ${intentLabels[currentIntent]}。請記錄執行結果。`;
-                resultLabels.forEach((label, i) => {
-                    const btn = document.createElement('div');
-                    if (label) {
-                        btn.className = `grid-cell result-mode ${i === 4 ? 'perfect' : ''}`;
-                        btn.innerText = label;
-                        btn.onclick = () => handleResult(i);
-                    } else {
-                        btn.className = `grid-cell disabled`;
-                    }
-                    container.appendChild(btn);
-                });
+            } else {
+                resultLayer.classList.add('hidden');
+                intentLayer.classList.remove('hidden');
+                lamp.innerText = "PHASE A: 請選擇下一次意圖 (INTENT)";
+                lamp.className = "lamp-intent";
             }
         }
 
-        async function handleResult(resultIndex) {
+        async function handleResult(resultId) {
             if (window.navigator.vibrate) window.navigator.vibrate(50);
-            sessionShots.push({ club: currentClub, intent: currentIntent, result: resultIndex });
-
+            sessionShots.push({ club: currentClub, intent: currentIntent, result: resultId });
+            
+            document.getElementById('ai-text').innerText = "⚡ ANALYZING VECTOR...";
+            
             try {
                 const response = await fetch(`${API_BASE}/calculate-score`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         lineUserId: currentUserId, clubKey: currentClub, intended: currentIntent,
-                        actual: 4, missDir: resultIndex, missDeg: resultIndex === 4 ? 0 : 2, isPressure: isPressure
+                        actual: 4, missDir: resultId, missDeg: resultId === 4 ? 0 : 2, isPressure: isPressure
                     })
                 });
+
                 const text = await response.text();
-                if (response.ok && text) {
-                    const res = JSON.parse(text);
-                    document.getElementById('ivr-display').innerText = `${res.avgIvr}%`;
-                    const thiVal = parseFloat(res.liveThi);
-                    document.getElementById('thi-display').innerText = (thiVal >= 0 ? "+" : "") + res.liveThi;
-                    updateHUDVisuals(thiVal);
-                    document.getElementById('ai-text').innerText = getCoachingAdvice(currentClub, currentIntent, resultIndex, currentHdcp);
-                }
-            } catch (err) {}
+                if (!text) throw new Error("Empty Response");
+                const res = JSON.parse(text);
 
-            isResultMode = false;
-            setTimeout(renderGrid, 1500);
+                // 更新數據
+                document.getElementById('ivr-display').innerText = `${res.avgIvr}%`;
+                const thiVal = parseFloat(res.liveThi);
+                document.getElementById('thi-display').innerText = (thiVal >= 0 ? "+" : "") + res.liveThi;
+                updateHUD(thiVal);
+
+                // 產出專業建議並「留存」在方塊內
+                document.getElementById('ai-text').innerText = getVectorAdvice(currentClub, currentIntent, resultId, currentHdcp);
+
+            } catch (err) {
+                document.getElementById('ai-text').innerText = `連線異常: ${err.message}`;
+            }
+
+            // 瞬間切換回意圖模式，但不覆蓋 AI 文字
+            switchLayer(false);
         }
 
-        function getCoachingAdvice(club, intent, result, hcp) {
-            if (result === 4) return "Pure Strike! 意圖與執行完美重合。請保持當下的節奏感。";
-            if (result === 1) return `距離過長 (Too Long)。建議 HDCP ${hcp} 球員檢查力量輸出，確保節奏穩定。`;
-            if (result === 7) return `距離不足 (Short)。通常源於下桿減速。請確保送桿後的身體平衡。`;
-            const isDrawIntent = [0, 3, 6].includes(intent);
-            const isFadeIntent = [2, 5, 8].includes(intent);
-            if ((isDrawIntent && result === 5) || (isFadeIntent && result === 3)) return "⚠️ 偵測到 Double Cross！路徑與桿面脫節。建議放慢上桿速度。";
-            return "執行偏差已記錄。建議重新校準視覺化意圖。";
+        function getVectorAdvice(club, intent, result, hcp) {
+            if (result === 4) return "Pure Strike! 意圖與執行完美重合。請保持當下的心流狀態。";
+            const intentNames = ["H.Draw","High","H.Fade","Draw","CENTER","Fade","L.Draw","Low","L.Fade"];
+            const isDraw = [0, 3, 6].includes(intent);
+            const isFade = [2, 5, 8].includes(intent);
+            
+            if ((isDraw && result === 5) || (isFade && result === 3)) return "⚠️ 偵測到 Double Cross！桿面與路徑方向完全衝突，建議放慢上桿速度。";
+            if (result === 1) return `距離過長。建議 HDCP ${hcp} 球員檢查揮桿幅度，確保節奏穩定。`;
+            if (result === 7) return `距離不足。通常源於下桿減速，請專注於身體平衡感。`;
+            return `執行偏差已記錄。建議重新校準視覺化意圖，明確今日的 ${club} 基準線。`;
         }
 
-        function updateHUDVisuals(val) {
+        function updateHUD(val) {
             const arrow = document.getElementById('thi-arrow'), status = document.getElementById('thi-status');
             const disp = document.getElementById('thi-display'), container = document.getElementById('thi-container');
             if (val >= 0) {
@@ -286,6 +279,14 @@
         function selectClub(el) {
             document.querySelectorAll('.club-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active'); currentClub = el.dataset.key;
+        }
+
+        function togglePressure() {
+            isPressure = !isPressure;
+            const btn = document.getElementById('pressure-toggle');
+            btn.classList.toggle('active');
+            btn.innerText = isPressure ? "🔥 PRESSURE MODE: ON" : "🔥 PRESSURE MODE: OFF";
+            if (window.navigator.vibrate) window.navigator.vibrate(30);
         }
 
         async function fetchCloudProfile() {
@@ -323,23 +324,23 @@
             const grid = document.getElementById('heatmap-grid'); grid.innerHTML = '';
             ["","LONG","","LEFT","PERFECT","RIGHT","","SHORT",""].forEach((label, i) => {
                 const cell = document.createElement('div'); cell.className = `summary-grid-cell ${stats[i] > 0 ? 'hit' : ''}`;
-                cell.innerHTML = `<span>${stats[i]}</span><span class="scale-[0.8]">${label}</span>`; grid.appendChild(cell);
+                cell.innerHTML = `<span class="font-black text-xs">${stats[i]}</span><span class="scale-[0.8]">${label}</span>`; grid.appendChild(cell);
             });
             const diagContainer = document.getElementById('club-diagnostics'); diagContainer.innerHTML = '';
             ["DRIVER", "IRON", "WEDGE"].forEach(club => {
                 const clubShots = sessionShots.filter(s => s.club === club);
                 if (clubShots.length > 0) {
-                    const left = clubShots.filter(s => s.result === 3).length;
-                    const right = clubShots.filter(s => s.result === 5).length;
-                    let advice = "執行穩定。";
+                    const left = clubShots.filter(s => s.result === 3).length, right = clubShots.filter(s => s.result === 5).length;
+                    let advice = "執行穩定，維持節奏。";
                     if (left > right) advice = "傾向左偏，注意握桿。"; else if (right > left) advice = "傾向右偏，確保轉移。";
                     const card = document.createElement('div'); card.className = "club-diag-card";
                     card.innerHTML = `<p class="text-[#FF9100] text-[10px] font-black uppercase">${club} ANALYSIS</p><p class="text-white text-xs font-bold mt-1">${advice}</p>`;
                     diagContainer.appendChild(card);
                 }
             });
-            document.getElementById('grand-ai-text').innerText = `${currentDisplayName.toUpperCase()}，今日戰術總結：您的執行偏差已量化。下一場請專注於「意圖視覺化」，守住您的 THI 指數。`;
+            document.getElementById('grand-ai-text').innerText = `${currentDisplayName.toUpperCase()}，今日總結：執行偏差已量化。下一場請專注於「意圖視覺化」，守住您的 THI 指數。`;
         }
+
         initLiff();
     </script>
 </body>
