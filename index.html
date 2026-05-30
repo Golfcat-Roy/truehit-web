@@ -62,6 +62,7 @@
                     <span class="text-[10px] font-black text-cyan-400 uppercase tracking-widest">IVR sync</span>
                     <span id="ivr-display" class="text-3xl font-black text-white">--%</span>
                 </div>
+                <!-- 點擊此區塊修改 HDCP -->
                 <div class="player-box" onclick="promptHdcpUpdate()">
                     <div id="player-name" class="text-white text-[11px] font-black leading-tight truncate">PLAYER</div>
                     <div class="text-zinc-500 text-[8px] font-bold mt-1 uppercase tracking-tighter">HDCP</div>
@@ -70,9 +71,9 @@
             </div>
 
             <div id="ai-box" class="mt-1">
-                <div id="ai-label" class="text-[#FF9100] text-[10px] font-black uppercase tracking-widest mb-1">Tactical Coaching</div>
-                <div id="ai-text" class="text-base font-bold text-zinc-100 leading-tight">
-                    系統就緒。請開始記錄您的擊球，AI 將在此提供即時戰術指引。
+                <div id="ai-label" class="text-[#FF9100] text-[10px] font-black uppercase tracking-widest mb-1 px-4 pt-1">Tactical Coaching</div>
+                <div id="ai-text" class="text-base font-bold text-zinc-100 leading-tight px-4 pb-1">
+                    系統就緒。請開始記錄您的擊球，AI 教練將在此提供即時戰術指引。
                 </div>
             </div>
 
@@ -111,7 +112,7 @@
         </div>
     </div>
 
-    <!-- [版權頁面] -->
+    <!-- [版權聲明頁面] -->
     <div id="copyright-splash">
         <div class="w-32 h-32 border-4 border-[#1a365d] rounded-full flex items-center justify-center mb-8 mx-auto">
             <div class="text-[#1a365d] font-black text-xl tracking-tighter">TRUEHIT</div>
@@ -122,7 +123,7 @@
             <p>商標聲明：THI and IVR are trademarks of<br>GolfCat/Po yun Chiu/. All rights reserved.</p>
             <p>技術支持：Google MediaPipe Gemma 2B AI.</p>
         </div>
-        <div class="mt-12 text-zinc-400 text-sm animate-pulse tracking-[0.3em]">數據分析中...</div>
+        <div class="mt-12 text-zinc-400 text-sm animate-pulse tracking-[0.3em]">數據同步與分析中...</div>
     </div>
 
     <!-- [戰報頁面] -->
@@ -161,8 +162,9 @@
         async function fetchCloudProfile() {
             try {
                 const response = await fetch(`${API_BASE}/get-profile/${currentUserId}`);
-                if (response.ok) {
-                    const data = await response.json();
+                const responseText = await response.text();
+                if (response.ok && responseText) {
+                    const data = JSON.parse(responseText);
                     currentHdcp = parseFloat(data.hdcp);
                     document.getElementById('player-hdcp').innerText = currentHdcp.toFixed(1);
                 }
@@ -193,7 +195,7 @@
         function selectClub(el) { document.querySelectorAll('.club-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); currentClub = el.dataset.key; }
         function setIntent(pos) { currentIntent = pos; document.querySelectorAll('.grid-cell').forEach((c, idx) => { idx === pos ? c.classList.add('active') : c.classList.remove('active'); }); }
 
-        // --- 強固通訊版 sendShot ---
+        // --- 強固通訊版 sendShot (解決 JSON input 報錯) ---
         async function sendShot(missDir, missDeg) {
             if (window.navigator.vibrate) window.navigator.vibrate(50);
             const actualPos = missDir === 4 ? currentIntent : (missDir === 3 ? 3 : 5);
@@ -214,28 +216,33 @@
                 });
 
                 const responseText = await response.text();
-                if (!responseText) throw new Error("Empty Response");
-                const result = JSON.parse(responseText);
+                if (!responseText) throw new Error("伺服器回傳空內容 (Check DB)");
+                
+                let result;
+                try { result = JSON.parse(responseText); } 
+                catch (e) { throw new Error("JSON 解析失敗 (Server Error)"); }
 
-                if (!response.ok) throw new Error(result.error || `Server ${response.status}`);
+                if (!response.ok) throw new Error(result.error || `代碼 ${response.status}`);
 
+                // 更新數據
                 document.getElementById('ivr-display').innerText = `${result.avgIvr}%`;
                 const thiVal = parseFloat(result.liveThi);
                 document.getElementById('thi-display').innerText = (thiVal >= 0 ? "+" : "") + result.liveThi;
                 
                 aiLabel.innerText = "TACTICAL COACHING";
-                if (parseInt(result.score) >= 100) aiText.innerText = "完美擊球！身體執行與意圖完全同步。請保持節奏。";
-                else if (missDir === 3) aiText.innerText = `偵測到左偏。HDCP ${currentHdcp} 球員建議檢查握桿，向右修正。`;
-                else if (missDir === 5) aiText.innerText = `偵測到右偏。HDCP ${currentHdcp} 球員建議專注重心轉移。`;
+                if (parseInt(result.score) >= 100) aiText.innerText = "完美擊球！大腦藍圖與身體執行高度一致。請保持節奏。";
+                else if (missDir === 3) aiText.innerText = `偵測到左偏失誤。HDCP ${currentHdcp} 球員建議檢查握桿。`;
+                else if (missDir === 5) aiText.innerText = `偵測到右偏失誤。HDCP ${currentHdcp} 球員建議專注重心轉移。`;
                 else aiText.innerText = "執行偏差已記錄。建議放慢上桿速度，在擊球前重新確立目標點。";
 
             } catch (err) { 
-                aiLabel.innerText = "DIAGNOSTIC ERROR";
+                console.error("Link Error", err);
+                aiLabel.innerText = "DIAGNOSTIC FAILED";
                 aiText.innerText = `連線異常: ${err.message}`; 
             }
         }
 
-        function startFinalizeFlow() { if (sessionShots.length === 0) { alert("尚未記錄數據。"); return; } if (confirm("確定要結算本場球局嗎？")) { document.getElementById('copyright-splash').style.display = 'flex'; setTimeout(showSummary, 2500); } }
+        function startFinalizeFlow() { if (sessionShots.length === 0) { alert("尚未記錄數據。"); return; } if (confirm("確定要結算球局嗎？")) { document.getElementById('copyright-splash').style.display = 'flex'; setTimeout(showSummary, 2500); } }
 
         function showSummary() {
             document.getElementById('copyright-splash').style.display = 'none';
@@ -255,8 +262,8 @@
             const total = sessionShots.length;
             const leftCount = sessionShots.filter(s => s.actual === 0 || s.actual === 3 || s.actual === 6).length;
             const rightCount = sessionShots.filter(s => s.actual === 2 || s.actual === 5 || s.actual === 8).length;
-            if (leftCount > rightCount && leftCount > total * 0.4) grandAi.innerText = `今日呈現明顯「左偏」傾向。HDCP ${currentHdcp} 的您應注意下桿轉身，下一場預設瞄準區向右偏移。`;
-            else if (rightCount > leftCount && rightCount > total * 0.4) grandAi.innerText = `今日偵測到穩定「右偏」慣性。通常是路徑由外向內，建議下一場專注於「重心平穩轉移」。`;
+            if (leftCount > rightCount && leftCount > total * 0.4) grandAi.innerText = `今日呈現明顯「左偏」傾向。HDCP ${currentHdcp} 的您應注意下桿轉身，下一場建議預設瞄準區向右偏移。`;
+            else if (rightCount > leftCount && rightCount > total * 0.4) grandAi.innerText = `今日偵測到穩定「右偏」慣性。通常是路徑由外向內，建議下一場專注於重心平穩轉移。`;
             else grandAi.innerText = `今日擊球分佈平均。同步穩定度良好，戰術失誤屬偶發。建議維持目前的預備流程。`;
         }
         initLiff();
