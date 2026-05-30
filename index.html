@@ -37,11 +37,12 @@
         .btn-miss { background-color: #111; border: 2px solid #333; color: #FF6D00; font-size: 32px; }
         .btn-perfect { background: linear-gradient(135deg, #00FFFF, #008888); color: #000; font-size: 20px; }
 
-        /* --- 特殊頁面 --- */
+        /* --- 特殊頁面 (版權與結算) --- */
         #copyright-splash { background-color: #ffffff; color: #000; position: fixed; inset: 0; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center; }
         #summary-view { background-color: #000; position: fixed; inset: 0; z-index: 2000; display: none; flex-direction: column; padding: 25px; overflow-y: auto; }
         .summary-grid-cell { aspect-ratio: 1/1; border: 1px solid #333; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0a0a0a; border-radius: 8px; font-size: 10px; color: #555; }
         .summary-grid-cell.hit { background: rgba(0, 255, 255, 0.15); border-color: #00FFFF; color: #00FFFF; }
+        
         .loading-overlay { background: rgba(0,0,0,1); position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 5000; }
     </style>
 </head>
@@ -49,7 +50,7 @@
 
     <div id="loading" class="loading-overlay text-cyan-400 font-bold tracking-widest text-base">SYNCING CLOUD...</div>
 
-    <!-- [主控制台] -->
+    <!-- [主控制台介面] -->
     <div id="main-ui" class="flex flex-col h-full justify-between">
         <div class="flex flex-col">
             <div class="dashboard-row">
@@ -85,6 +86,7 @@
             <button id="pressure-toggle" onclick="togglePressure()" class="stack-item pressure-btn tracking-[0.4em]">
                 🔥 PRESSURE MODE: OFF
             </button>
+            
             <div class="stack-item flex gap-1.5">
                 <button class="club-btn" data-key="DRIVER" onclick="selectClub(this)">DRIVER</button>
                 <button class="club-btn" data-key="FW" onclick="selectClub(this)">FW/HB</button>
@@ -92,6 +94,7 @@
                 <button class="club-btn" data-key="WEDGE" onclick="selectClub(this)">WEDGE</button>
                 <button class="club-btn" data-key="PUTTER" onclick="selectClub(this)">PUTTER</button>
             </div>
+
             <div class="stack-item grid grid-cols-3 gap-2.5 w-full max-w-sm mx-auto">
                 <div class="grid-cell" onclick="setIntent(0)">H.Draw</div>
                 <div class="grid-cell" onclick="setIntent(1)">High</div>
@@ -103,6 +106,7 @@
                 <div class="grid-cell" onclick="setIntent(7)">Low</div>
                 <div class="grid-cell" onclick="setIntent(8)">L.Fade</div>
             </div>
+
             <div class="flex items-center w-full gap-3 mt-1">
                 <button onclick="sendShot(3, 2)" class="action-bar-item btn-miss active:scale-95">←</button>
                 <button onclick="sendShot(4, 4)" class="action-bar-item btn-perfect active:scale-95">PERFECT</button>
@@ -122,7 +126,7 @@
             <p>商標聲明：THI and IVR are trademarks of<br>GolfCat/Po yun Chiu/. All rights reserved.</p>
             <p>技術支持：Google MediaPipe Gemma 2B AI.</p>
         </div>
-        <div class="mt-12 text-zinc-400 text-sm animate-pulse tracking-[0.3em]">數據同步與分析中...</div>
+        <div class="mt-12 text-zinc-400 text-sm animate-pulse tracking-[0.3em]">數據分析中...</div>
     </div>
 
     <!-- [戰報頁面] -->
@@ -134,7 +138,7 @@
         </div>
         <div class="bg-zinc-900 rounded-2xl p-5 mb-8">
             <p class="text-[#00FFFF] text-[10px] font-black uppercase mb-2 tracking-widest">AI 教練總結</p>
-            <p id="grand-ai-text" class="text-base font-bold leading-relaxed text-zinc-200">正在生成建議...</p>
+            <p id="grand-ai-text" class="text-base font-bold leading-relaxed text-zinc-200">正在處理...</p>
         </div>
         <button onclick="liff.closeWindow()" class="w-full py-4 rounded-2xl bg-white text-black font-black text-sm tracking-widest">返回 LINE 聊天室</button>
     </div>
@@ -220,19 +224,29 @@
                         actual: actualPos, missDir: missDir, missDeg: missDeg, isPressure: isPressure
                     })
                 });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(`SERVER ${response.status}: ${errData.error || 'Check DB'}`);
+                }
+
                 const result = await response.json();
                 
-                // 更新頂部雲端同步數據
+                // 更新頂部顯示 (v6.1 字串轉型處理)
                 document.getElementById('ivr-display').innerText = `${result.avgIvr}%`;
                 const thiVal = parseFloat(result.liveThi);
-                document.getElementById('thi-display').innerText = (thiVal >= 0 ? "+" : "") + thiVal.toFixed(1);
+                document.getElementById('thi-display').innerText = (thiVal >= 0 ? "+" : "") + result.liveThi;
                 
                 aiLabel.innerText = "TACTICAL COACHING";
-                if (result.score >= 100) aiText.innerText = "完美擊球！身體執行與意圖完全同步。請保持當下的擊球節奏。";
-                else if (missDir === 3) aiText.innerText = `偵測到左偏。HDCP ${currentHdcp} 球員建議檢查握桿壓力，瞄準區向右修正。`;
-                else if (missDir === 5) aiText.innerText = `偵測到右偏。HDCP ${currentHdcp} 球員建議專注於平穩的重心轉移。`;
-                else aiText.innerText = "執行偏差已記錄。建議放慢上桿速度，在擊球前重新確立目標點。";
-            } catch (err) { aiText.innerText = "連線失敗。"; }
+                if (parseInt(result.score) >= 100) aiText.innerText = "完美擊球！身體執行與意圖高度重合。請保持當下的擊球節奏。";
+                else if (missDir === 3) aiText.innerText = `偵測到左偏失誤。HDCP ${currentHdcp} 球員建議檢查握桿壓力，向右微調。`;
+                else if (missDir === 5) aiText.innerText = `偵測到右偏失誤。HDCP ${currentHdcp} 球員建議專注於平穩的重心轉移。`;
+                else aiText.innerText = "執行偏差已記錄。建議放慢上桿速度，在擊球前重新確立目標。";
+
+            } catch (err) { 
+                aiLabel.innerText = "DIAGNOSTIC ERROR";
+                aiText.innerText = `連線失敗: ${err.message}`; 
+            }
         }
 
         function startFinalizeFlow() {
@@ -266,7 +280,7 @@
             const rightCount = sessionShots.filter(s => s.actual === 2 || s.actual === 5 || s.actual === 8).length;
 
             if (leftCount > rightCount && leftCount > total * 0.4) {
-                grandAi.innerText = `今日呈現明顯「左偏」傾向。HDCP ${currentHdcp} 的您應注意下桿轉身過早，下一場建議預設瞄準區向右偏移 5 碼。`;
+                grandAi.innerText = `今日呈現明顯的「左偏」傾向。HDCP ${currentHdcp} 的您應注意下桿轉身過早，下一場建議預設瞄準區向右偏移 5 碼。`;
             } else if (rightCount > leftCount && rightCount > total * 0.4) {
                 grandAi.innerText = `今日偵測到穩定「右偏」慣性。通常是路徑由外向內，建議下一場專注於「重心平穩轉移」。`;
             } else {
