@@ -12,86 +12,73 @@
             --neon-cyan: #00FFFF;
             --neon-orange: #FF9100;
             --neon-lime: #CCFF00;
-            /* 動態間距變數 */
             --stack-gap: min(1.2vh, 10px);
         }
 
         @keyframes pulse-orange { 0% { box-shadow: 0 0 0 0 rgba(255, 145, 0, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 145, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 145, 0, 0); } }
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        @keyframes border-glow { 0% { border-color: rgba(0, 255, 255, 0.5); } 50% { border-color: rgba(0, 255, 255, 1); box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); } 100% { border-color: rgba(0, 255, 255, 0.5); } }
+        /* Phase A 高亮度呼吸燈 */
+        @keyframes intent-glow { 0% { border-color: rgba(0, 255, 255, 0.5); } 50% { border-color: rgba(0, 255, 255, 1); box-shadow: 0 0 12px rgba(0, 255, 255, 0.4); } 100% { border-color: rgba(0, 255, 255, 0.5); } }
         
         body { 
-            background-color: #000; 
-            color: #fff; 
-            font-family: 'Inter', sans-serif; 
-            overflow: hidden; 
-            height: 100vh; 
+            background-color: #000; color: #fff; font-family: 'Inter', sans-serif; 
+            overflow: hidden; height: 100vh; 
             padding: 10px 15px calc(10px + env(safe-area-inset-bottom)); 
-            display: flex; 
-            flex-direction: column;
-            box-sizing: border-box;
+            display: flex; flex-direction: column; box-sizing: border-box;
         }
 
         /* 1. Dashboard Area (18vh) */
-        .dashboard-row { 
-            height: 18vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            gap: 8px;
-            flex-shrink: 0; 
-        }
+        .dashboard-row { height: 18vh; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0; }
         .hud-box {
             flex: 1; height: 100%; border-radius: 12px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             padding: 4px; border-width: 2.5px;
         }
         #thi-container { border-color: var(--neon-lime); background: rgba(204, 255, 0, 0.05); }
+        #thi-display { font-size: clamp(28px, 4.5vh, 36px); line-height: 1; margin: 4px 0; }
         .player-box { border-color: var(--neon-cyan); background: rgba(0, 255, 255, 0.1); cursor: pointer; }
+        #player-name { font-size: clamp(12px, 2vh, 16px); font-weight: 900; }
+        #player-hdcp { font-size: clamp(16px, 2.5vh, 20px); }
+        
         .ivr-indicator { 
-            width: 26vw; height: 26vw; max-width: 15vh; max-height: 15vh;
+            width: 26vw; height: 26vw; max-width: 14vh; max-height: 14vh;
             border-radius: 50%; border: 6px solid var(--neon-cyan); 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             background: rgba(0, 255, 255, 0.05); flex-shrink: 0; 
         }
 
-        /* 2. AI Coach Area (14vh) - 放大字體以利行走辨識 */
+        /* 2. AI Coach Area (14vh) - 放大字體 */
         #ai-box { 
-            height: 14vh;
-            border: 2px solid var(--neon-orange); border-left: 8px solid var(--neon-orange); 
+            height: 14vh; border: 2px solid var(--neon-orange); border-left: 10px solid var(--neon-orange); 
             border-radius: 14px; background: linear-gradient(145deg, #1a1000, #000000); 
             display: flex; flex-direction: column; justify-content: center; 
             padding: 10px 16px; margin: var(--stack-gap) 0; overflow: hidden;
         }
-        #ai-text { 
-            font-size: clamp(14px, 2.4vh, 19px); /* 放大 AI 建議文字 */
-            line-height: 1.3;
-            letter-spacing: 0.02em;
-        }
+        #ai-text { font-size: clamp(14px, 2.4vh, 19px); font-weight: 700; line-height: 1.3; color: #fff; }
 
-        /* 3. Control Stack (18-20vh) */
+        /* 3. Control Stack (20vh) */
         .control-stack { display: flex; flex-direction: column; gap: var(--stack-gap); flex-shrink: 0; }
         .finalize-btn { height: 3.5vh; background: #0a0a0a; border: 1px solid #333; border-radius: 8px; font-size: 9px; color: #555; font-weight: 900; }
-        .pressure-btn { height: 6.5vh; background: #111; border: 2.5px solid #333; border-radius: 14px; font-size: clamp(13px, 2.2vh, 18px); letter-spacing: 0.3em; }
+        .pressure-btn { height: 6.5vh; background: #111; border: 2.5px solid #333; border-radius: 14px; font-size: clamp(14px, 2.2vh, 18px); letter-spacing: 0.3em; }
         .pressure-btn.active { background: rgba(239, 68, 68, 0.3); border-color: #ef4444; animation: pulse-red 1.5s infinite; }
         
-        .club-row { height: 6vh; display: flex; gap: 5px; }
+        .club-row { height: 6vh; display: flex; gap: 6px; }
         .club-btn { 
             flex: 1; border: 2px solid #333; border-radius: 10px; 
-            font-size: clamp(12px, 2.1vh, 16px); /* 放大球桿按鈕文字 */
+            font-size: clamp(12px, 2.1vh, 17px); /* 放大球桿文字 */
             font-weight: 900; color: var(--neon-orange); background: #050505; 
         }
         .club-btn.active { border-color: var(--neon-cyan); background: var(--neon-cyan); color: #000 !important; }
 
         #status-lamp { 
             height: 4.5vh; border-radius: 8px; font-weight: 900;
-            font-size: clamp(11px, 1.9vh, 14px); 
+            font-size: clamp(11px, 2vh, 15px); 
             display: flex; align-items: center; justify-content: center; text-transform: uppercase;
         }
         .lamp-intent { background: rgba(0, 255, 255, 0.25); border: 1.5px solid var(--neon-cyan); color: var(--neon-cyan); }
         .lamp-result { background: rgba(255, 145, 0, 0.35); border: 2px solid var(--neon-orange); color: #fff; animation: pulse-orange 1.5s infinite; }
 
-        /* 4. Grid Area (40vh+) - 強化意圖階段邊框亮度 */
+        /* 4. Grid Area (均分剩餘高度) */
         .grid-container { flex-grow: 1; position: relative; margin-top: var(--stack-gap); min-height: 0; }
         .grid-layer { 
             position: absolute; inset: 0; display: grid; 
@@ -99,18 +86,16 @@
         }
         .grid-cell { 
             border-radius: 14px; display: flex; align-items: center; justify-content: center; 
-            font-size: clamp(14px, 2.6vh, 20px); /* 顯著放大九宮格文字 */
-            font-weight: 900; background: #080808; border: 2px solid #2a2a2a; transition: transform 0.1s;
+            font-size: clamp(15px, 2.8vh, 22px); /* 放大九宮格文字 */
+            font-weight: 900; background: #080808; border: 2px solid #2a2a2a; 
         }
         
-        /* [重點修改] Phase A 意圖階段：高亮度邊框與呼吸燈效果 */
+        /* Phase A 專屬：高亮度邊框引導 */
         #intent-layer .grid-cell {
             border: 2.5px solid var(--neon-cyan);
-            color: #FFFFFF;
-            animation: border-glow 2s infinite ease-in-out;
+            animation: intent-glow 2s infinite ease-in-out;
         }
 
-        .grid-cell:active { transform: scale(0.95); }
         .grid-cell.active { background: var(--neon-cyan); color: #000 !important; border-color: var(--neon-cyan); animation: none !important; }
         .grid-cell.result-btn { border-color: var(--neon-orange); border-width: 3px; color: #fff; }
         .grid-cell.perfect { background: linear-gradient(135deg, #FF9100, #FF6D00); border: none; color: #000 !important; font-size: 1.3em; }
@@ -118,18 +103,23 @@
 
         .hidden { display: none !important; }
         .mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* 總結報告畫面 (保持不變) */
+        #summary-view { background-color: #0d0d0d; position: fixed; inset: 0; z-index: 2000; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
+        .summary-grid-cell { aspect-ratio: 1/1; border: 1.8px solid #333; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .summary-grid-cell.hit { border-color: var(--neon-cyan); background: rgba(0, 255, 255, 0.1); color: var(--neon-cyan); }
     </style>
 </head>
 <body class="font-black">
 
-    <div id="loading" class="fixed inset-0 bg-black flex items-center justify-center z-[10000] text-cyan-400 font-bold tracking-widest uppercase">Syncing Terminal V8.2...</div>
+    <div id="loading" class="fixed inset-0 bg-black flex items-center justify-center z-[10000] text-cyan-400 font-bold tracking-widest uppercase">Syncing Terminal V8.3...</div>
 
     <div id="main-ui" class="flex flex-col h-full w-full">
         <!-- Dashboard Area -->
         <div class="dashboard-row">
             <div id="thi-container" class="hud-box">
                 <span class="text-zinc-500 text-[8px] font-black uppercase tracking-tighter">THI INDEX</span>
-                <div class="flex items-center justify-center gap-1"><span id="thi-arrow" class="text-xs">--</span><span id="thi-display" class="text-2xl font-black text-lime-400">--.-</span></div>
+                <div id="thi-display" class="font-black text-lime-400 mono">--.-</div>
                 <span id="thi-status" class="text-[8px] font-black uppercase text-zinc-400">WAITING</span>
             </div>
             <div class="ivr-indicator">
@@ -137,16 +127,16 @@
                 <span id="ivr-display" class="text-3xl font-black text-white mono">--%</span>
             </div>
             <div class="player-box hud-box" onclick="promptHdcpUpdate()">
-                <div id="player-name" class="text-white text-[10px] font-black truncate uppercase">PLAYER</div>
+                <div id="player-name" class="text-white truncate uppercase">PLAYER</div>
                 <div class="text-zinc-500 text-[8px] font-bold mt-1 uppercase">HDCP</div>
-                <div id="player-hdcp" class="text-cyan-400 text-sm font-black italic mono">15.0</div>
+                <div id="player-hdcp" class="text-cyan-400 font-black italic mono">15.0</div>
             </div>
         </div>
 
         <!-- AI Coach Area -->
         <div id="ai-box">
             <div id="ai-label" class="text-[#FF9100] text-[10px] font-black uppercase tracking-widest mb-1.5">Diagnostic AI Coach</div>
-            <div id="ai-text" class="font-bold text-white leading-tight text-center">系統就緒。請設定擊球意圖。</div>
+            <div id="ai-text" class="text-center">系統就緒。請設定擊球意圖。</div>
         </div>
 
         <!-- Control Stack Area -->
@@ -190,16 +180,16 @@
         </div>
     </div>
 
-    <!-- 戰報總結頁 -->
-    <div id="summary-view" style="background-color: #0d0d0d; position: fixed; inset: 0; z-index: 2000; display: none; flex-direction: column; padding: 25px; overflow-y: auto;">
+    <!-- 戰報總結頁 (保持不變) -->
+    <div id="summary-view">
         <div class="mb-8 border-b border-zinc-800 pb-4">
             <p class="text-zinc-500 text-[10px] font-black uppercase tracking-widest text-lime-400">Tactical Performance Report</p>
             <h1 class="text-white text-3xl font-black italic tracking-tighter">THI™ <span class="text-[#CCFF00]">TrueHit™ Index</span></h1>
         </div>
         <div id="grand-ai-box" class="bg-zinc-900 p-6 rounded-2xl border-l-4 border-orange-500 mb-8">
-            <p id="grand-ai-text" class="text-white text-lg font-bold leading-relaxed"></p>
+            <p id="grand-ai-text" class="text-white text-sm leading-relaxed"></p>
         </div>
-        <button onclick="liff.closeWindow()" class="w-full py-5 rounded-xl bg-white text-black font-black uppercase text-lg">結束並返回 LINE</button>
+        <button onclick="liff.closeWindow()" class="w-full py-4 rounded-xl bg-white text-black font-black uppercase">結束並返回 LINE</button>
     </div>
 
     <script>
@@ -230,13 +220,8 @@
 
         function switchLayer(isResult) {
             const iL = document.getElementById('intent-layer'), rL = document.getElementById('result-layer'), lamp = document.getElementById('status-lamp');
-            if (isResult) { 
-                iL.classList.add('hidden'); rL.classList.remove('hidden'); 
-                lamp.innerText = "PHASE B: 記錄結果 (RESULT)"; lamp.className = "lamp-result"; 
-            } else { 
-                rL.classList.add('hidden'); iL.classList.remove('hidden'); 
-                lamp.innerText = "PHASE A: 選擇下一次意圖 (INTENT)"; lamp.className = "lamp-intent"; 
-            }
+            if (isResult) { iL.classList.add('hidden'); rL.classList.remove('hidden'); lamp.innerText = "PHASE B: 記錄結果 (RESULT)"; lamp.className = "lamp-result"; }
+            else { rL.classList.add('hidden'); iL.classList.remove('hidden'); lamp.innerText = "PHASE A: 選擇下一次意圖 (INTENT)"; lamp.className = "lamp-intent"; }
         }
 
         async function handleResult(resultId) {
@@ -253,7 +238,6 @@
                     avgIvr = parseInt(res.avgIvr);
                     document.getElementById('ivr-display').innerText = `${avgIvr}%`;
                     const thiVal = parseFloat(res.liveThi);
-                    document.getElementById('thi-display').innerText = (thiVal >= 0 ? "+" : "") + res.liveThi;
                     updateHUD(thiVal);
                     document.getElementById('ai-text').innerText = getDynamicMindsetAdvice(currentClub, currentIntent, resultId, avgIvr, isPressure);
                 }
@@ -262,16 +246,18 @@
         }
 
         function getDynamicMindsetAdvice(club, intent, result, ivr, pressure) {
-            if (result === 4) return ivr >= 85 ? `[心流] 同步率極高。建議採取積極進攻。` : `Pure Strike! 節奏穩定，請守住目前的 Flow。`;
+            if (result === 4) return `Pure Strike! 節奏穩定，請守住目前的 Flow。`;
             if (pressure) return `壓力環境導致變形。請執行「10碼規則」斷開挫折感。`;
             if (ivr < 75) return `[警示] 同步率下滑。建議瞄準果嶺中心安全區。`;
-            return `執行偏差已量化。請針對 ${club} 重新視覺化目標。`;
+            return `執行偏差已量化。請針對 ${club} 重新視覺化目標點。`;
         }
 
         function updateHUD(val) {
             const d = document.getElementById('thi-display'), s = document.getElementById('thi-status'), c = document.getElementById('thi-container');
-            if (val >= 0) { s.innerText = "SAVED"; d.className = "text-2xl font-black text-lime-400"; c.style.borderColor = "#CCFF00"; }
-            else { s.innerText = "LOST"; d.className = "text-2xl font-black text-[#FF9100]"; c.style.borderColor = "#FF9100"; }
+            // 更新 THI 顯示格式為 "+3.5" 或 "-2.1"
+            d.innerText = (val >= 0 ? "+" : "") + val.toFixed(1);
+            if (val >= 0) { s.innerText = "SAVED"; d.className = "font-black text-lime-400 mono"; c.style.borderColor = "#CCFF00"; }
+            else { s.innerText = "LOST"; d.className = "font-black text-[#FF9100] mono"; c.style.borderColor = "#FF9100"; }
         }
 
         function selectClub(el) { document.querySelectorAll('.club-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); currentClub = el.dataset.key; }
