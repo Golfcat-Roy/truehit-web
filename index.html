@@ -12,99 +12,135 @@
             --neon-cyan: #00FFFF;
             --neon-orange: #FF9100;
             --neon-lime: #CCFF00;
-            --stack-gap: min(1.2vh, 10px);
+            /* 動態間距變數 */
+            --stack-gap: min(1.2vh, 8px);
         }
 
-        @keyframes pulse-orange { 0% { box-shadow: 0 0 0 0 rgba(255, 145, 0, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 145, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 145, 0, 0); } }
-        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        /* Phase A 高亮度呼吸燈 */
-        @keyframes intent-glow { 0% { border-color: rgba(0, 255, 255, 0.5); } 50% { border-color: rgba(0, 255, 255, 1); box-shadow: 0 0 12px rgba(0, 255, 255, 0.4); } 100% { border-color: rgba(0, 255, 255, 0.5); } }
+        @keyframes pulse-orange { 0% { box-shadow: 0 0 0 0 rgba(255, 145, 0, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(255, 145, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 145, 0, 0); } }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
         
         body { 
-            background-color: #000; color: #fff; font-family: 'Inter', sans-serif; 
-            overflow: hidden; height: 100vh; 
+            background-color: #000; 
+            color: #fff; 
+            font-family: 'Inter', sans-serif; 
+            overflow: hidden; 
+            height: 100vh; 
+            /* 支援瀏海屏安全區域 */
             padding: 10px 15px calc(10px + env(safe-area-inset-bottom)); 
-            display: flex; flex-direction: column; box-sizing: border-box;
+            display: flex; 
+            flex-direction: column;
+            box-sizing: border-box;
         }
 
-        /* 1. Dashboard Area (18vh) */
-        .dashboard-row { height: 18vh; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0; }
+        /* 1. Dashboard Area (約佔 18-20vh) */
+        .dashboard-row { 
+            height: 18vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            gap: 10px;
+            flex-shrink: 0; 
+        }
         .hud-box {
-            flex: 1; height: 100%; border-radius: 12px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 4px; border-width: 2.5px;
+            flex: 1;
+            height: 100%;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4px;
+            border-width: 2px;
         }
         #thi-container { border-color: var(--neon-lime); background: rgba(204, 255, 0, 0.05); }
-        #thi-display { font-size: clamp(28px, 4.5vh, 36px); line-height: 1; margin: 4px 0; }
         .player-box { border-color: var(--neon-cyan); background: rgba(0, 255, 255, 0.1); cursor: pointer; }
-        #player-name { font-size: clamp(12px, 2vh, 16px); font-weight: 900; }
-        #player-hdcp { font-size: clamp(16px, 2.5vh, 20px); }
         
+        /* IVR 圓圈縮放邏輯 */
         .ivr-indicator { 
-            width: 26vw; height: 26vw; max-width: 14vh; max-height: 14vh;
-            border-radius: 50%; border: 6px solid var(--neon-cyan); 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            background: rgba(0, 255, 255, 0.05); flex-shrink: 0; 
+            width: 25vw; 
+            height: 25vw; 
+            max-width: 15vh;
+            max-height: 15vh;
+            border-radius: 50%; 
+            border: 5px solid var(--neon-cyan); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            background: rgba(0, 255, 255, 0.05); 
+            flex-shrink: 0; 
         }
 
-        /* 2. AI Coach Area (14vh) - 放大字體 */
+        /* 2. AI Coach Area (佔 12-15vh) */
         #ai-box { 
-            height: 14vh; border: 2px solid var(--neon-orange); border-left: 10px solid var(--neon-orange); 
-            border-radius: 14px; background: linear-gradient(145deg, #1a1000, #000000); 
-            display: flex; flex-direction: column; justify-content: center; 
-            padding: 10px 16px; margin: var(--stack-gap) 0; overflow: hidden;
+            height: 13vh;
+            border: 2px solid var(--neon-orange); 
+            border-left: 6px solid var(--neon-orange); 
+            border-radius: 14px; 
+            background: linear-gradient(145deg, #1a1000, #000000); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            padding: 8px 12px; 
+            margin: var(--stack-gap) 0;
+            overflow: hidden;
         }
-        #ai-text { font-size: clamp(14px, 2.4vh, 19px); font-weight: 700; line-height: 1.3; color: #fff; }
+        #ai-text { font-size: clamp(12px, 2vh, 15px); }
 
-        /* 3. Control Stack (20vh) */
-        .control-stack { display: flex; flex-direction: column; gap: var(--stack-gap); flex-shrink: 0; }
-        .finalize-btn { height: 3.5vh; background: #0a0a0a; border: 1px solid #333; border-radius: 8px; font-size: 9px; color: #555; font-weight: 900; }
-        .pressure-btn { height: 6.5vh; background: #111; border: 2.5px solid #333; border-radius: 14px; font-size: clamp(14px, 2.2vh, 18px); letter-spacing: 0.3em; }
+        /* 3. Control Stack (佔 15-20vh) */
+        .control-stack {
+            display: flex;
+            flex-direction: column;
+            gap: var(--stack-gap);
+            flex-shrink: 0;
+        }
+        .finalize-btn { height: 4vh; background: #0a0a0a; border: 1px solid #333; border-radius: 8px; font-size: 10px; color: #666; font-weight: 900; }
+        .pressure-btn { height: 7vh; background: #111; border: 2px solid #333; border-radius: 14px; font-size: clamp(12px, 2.2vh, 16px); letter-spacing: 0.2em; }
         .pressure-btn.active { background: rgba(239, 68, 68, 0.3); border-color: #ef4444; animation: pulse-red 1.5s infinite; }
         
-        .club-row { height: 6vh; display: flex; gap: 6px; }
-        .club-btn { 
-            flex: 1; border: 2px solid #333; border-radius: 10px; 
-            font-size: clamp(12px, 2.1vh, 17px); /* 放大球桿文字 */
-            font-weight: 900; color: var(--neon-orange); background: #050505; 
-        }
+        .club-row { height: 6vh; display: flex; gap: 4px; }
+        .club-btn { flex: 1; border: 1.5px solid #333; border-radius: 8px; font-size: clamp(10px, 1.8vh, 13px); font-weight: 900; color: var(--neon-orange); background: #050505; }
         .club-btn.active { border-color: var(--neon-cyan); background: var(--neon-cyan); color: #000 !important; }
 
         #status-lamp { 
-            height: 4.5vh; border-radius: 8px; font-weight: 900;
-            font-size: clamp(11px, 2vh, 15px); 
-            display: flex; align-items: center; justify-content: center; text-transform: uppercase;
+            height: 4.5vh; 
+            border-radius: 8px; 
+            font-size: clamp(10px, 1.8vh, 12px); 
+            display: flex; align-items: center; justify-content: center; 
+            text-transform: uppercase; font-weight: 900;
         }
-        .lamp-intent { background: rgba(0, 255, 255, 0.25); border: 1.5px solid var(--neon-cyan); color: var(--neon-cyan); }
-        .lamp-result { background: rgba(255, 145, 0, 0.35); border: 2px solid var(--neon-orange); color: #fff; animation: pulse-orange 1.5s infinite; }
+        .lamp-intent { background: rgba(0, 255, 255, 0.2); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); }
+        .lamp-result { background: rgba(255, 145, 0, 0.3); border: 1.5px solid var(--neon-orange); color: #fff; animation: pulse-orange 1.5s infinite; }
 
-        /* 4. Grid Area (均分剩餘高度) */
-        .grid-container { flex-grow: 1; position: relative; margin-top: var(--stack-gap); min-height: 0; }
+        /* 4. Grid Area (佔 40-45vh) */
+        .grid-container { 
+            flex-grow: 1; /* 自動填滿剩餘空間 */
+            position: relative; 
+            margin-top: var(--stack-gap);
+            min-height: 0; /* 重要：防止 flex 容器溢出 */
+        }
         .grid-layer { 
-            position: absolute; inset: 0; display: grid; 
-            grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 10px; 
+            position: absolute; inset: 0; 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            grid-template-rows: repeat(3, 1fr); /* 強制均分三列高度 */
+            gap: 8px; 
         }
         .grid-cell { 
-            border-radius: 14px; display: flex; align-items: center; justify-content: center; 
-            font-size: clamp(15px, 2.8vh, 22px); /* 放大九宮格文字 */
-            font-weight: 900; background: #080808; border: 2px solid #2a2a2a; 
+            border-radius: 12px; display: flex; align-items: center; justify-content: center; 
+            font-size: clamp(11px, 2vh, 14px); font-weight: 900; background: #080808; 
+            border: 2px solid #222; transition: transform 0.1s;
         }
-        
-        /* Phase A 專屬：高亮度邊框引導 */
-        #intent-layer .grid-cell {
-            border: 2.5px solid var(--neon-cyan);
-            animation: intent-glow 2s infinite ease-in-out;
-        }
-
-        .grid-cell.active { background: var(--neon-cyan); color: #000 !important; border-color: var(--neon-cyan); animation: none !important; }
-        .grid-cell.result-btn { border-color: var(--neon-orange); border-width: 3px; color: #fff; }
-        .grid-cell.perfect { background: linear-gradient(135deg, #FF9100, #FF6D00); border: none; color: #000 !important; font-size: 1.3em; }
-        .grid-cell.disabled { opacity: 0.03; pointer-events: none; }
+        .grid-cell:active { transform: scale(0.96); }
+        .grid-cell.active { background: var(--neon-cyan); color: #000 !important; border-color: var(--neon-cyan); }
+        .grid-cell.result-btn { border-color: var(--neon-orange); color: #fff; }
+        .grid-cell.perfect { background: linear-gradient(135deg, #FF9100, #FF6D00); border: none; color: #000 !important; font-size: 1.2em; }
+        .grid-cell.disabled { opacity: 0.05; pointer-events: none; }
 
         .hidden { display: none !important; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* 總結報告畫面 (保持不變) */
+        /* 戰報與 Splash 頁面優化 */
         #summary-view { background-color: #0d0d0d; position: fixed; inset: 0; z-index: 2000; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
         .summary-grid-cell { aspect-ratio: 1/1; border: 1.8px solid #333; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .summary-grid-cell.hit { border-color: var(--neon-cyan); background: rgba(0, 255, 255, 0.1); color: var(--neon-cyan); }
@@ -112,14 +148,15 @@
 </head>
 <body class="font-black">
 
-    <div id="loading" class="fixed inset-0 bg-black flex items-center justify-center z-[10000] text-cyan-400 font-bold tracking-widest uppercase">Syncing Terminal V8.3...</div>
+    <div id="loading" class="fixed inset-0 bg-black flex items-center justify-center z-[10000] text-cyan-400 font-bold tracking-widest uppercase">Syncing V8.1 Optimized...</div>
 
+    <!-- 主介面 -->
     <div id="main-ui" class="flex flex-col h-full w-full">
         <!-- Dashboard Area -->
         <div class="dashboard-row">
             <div id="thi-container" class="hud-box">
                 <span class="text-zinc-500 text-[8px] font-black uppercase tracking-tighter">THI INDEX</span>
-                <div id="thi-display" class="font-black text-lime-400 mono">--.-</div>
+                <div class="flex items-center justify-center gap-1"><span id="thi-arrow" class="text-xs">--</span><span id="thi-display" class="text-2xl font-black text-lime-400">--.-</span></div>
                 <span id="thi-status" class="text-[8px] font-black uppercase text-zinc-400">WAITING</span>
             </div>
             <div class="ivr-indicator">
@@ -127,16 +164,16 @@
                 <span id="ivr-display" class="text-3xl font-black text-white mono">--%</span>
             </div>
             <div class="player-box hud-box" onclick="promptHdcpUpdate()">
-                <div id="player-name" class="text-white truncate uppercase">PLAYER</div>
+                <div id="player-name" class="text-white text-[10px] font-black truncate uppercase">PLAYER</div>
                 <div class="text-zinc-500 text-[8px] font-bold mt-1 uppercase">HDCP</div>
-                <div id="player-hdcp" class="text-cyan-400 font-black italic mono">15.0</div>
+                <div id="player-hdcp" class="text-cyan-400 text-sm font-black italic mono">15.0</div>
             </div>
         </div>
 
         <!-- AI Coach Area -->
         <div id="ai-box">
-            <div id="ai-label" class="text-[#FF9100] text-[10px] font-black uppercase tracking-widest mb-1.5">Diagnostic AI Coach</div>
-            <div id="ai-text" class="text-center">系統就緒。請設定擊球意圖。</div>
+            <div id="ai-label" class="text-[#FF9100] text-[9px] font-black uppercase tracking-widest mb-1">Diagnostic AI Coach</div>
+            <div id="ai-text" class="font-bold text-zinc-100 leading-tight text-center">系統就緒。請設定擊球意圖。</div>
         </div>
 
         <!-- Control Stack Area -->
@@ -153,7 +190,7 @@
             <div id="status-lamp" class="lamp-intent">PHASE A: 選擇意圖 (INTENT)</div>
         </div>
 
-        <!-- Grid Area -->
+        <!-- Grid Area (均分剩餘高度) -->
         <div class="grid-container">
             <div id="intent-layer" class="grid-layer">
                 <div class="grid-cell" onclick="handleIntent(0, 'H.Draw')">H.Draw</div>
@@ -180,11 +217,16 @@
         </div>
     </div>
 
-    <!-- 戰報總結頁 (保持不變) -->
+    <!-- 戰報總結與版權頁保留原有邏輯，僅優化 CSS 適配 -->
     <div id="summary-view">
+        <!-- ... (保持原有結構，CSS 已在上方優化) ... -->
         <div class="mb-8 border-b border-zinc-800 pb-4">
             <p class="text-zinc-500 text-[10px] font-black uppercase tracking-widest text-lime-400">Tactical Performance Report</p>
             <h1 class="text-white text-3xl font-black italic tracking-tighter">THI™ <span class="text-[#CCFF00]">TrueHit™ Index</span></h1>
+        </div>
+        <div class="bg-zinc-900/50 rounded-3xl p-6 mb-6 border border-zinc-800 text-center">
+            <p class="text-zinc-500 text-[10px] font-black uppercase mb-6 tracking-widest">今日執行偏差雷達 (Vector Radar)</p>
+            <div id="heatmap-grid" class="grid grid-cols-3 gap-3 max-w-[220px] mx-auto"></div>
         </div>
         <div id="grand-ai-box" class="bg-zinc-900 p-6 rounded-2xl border-l-4 border-orange-500 mb-8">
             <p id="grand-ai-text" class="text-white text-sm leading-relaxed"></p>
@@ -193,10 +235,11 @@
     </div>
 
     <script>
+        // ... (保持原有 Script 邏輯不變，確保功能完整) ...
         const API_BASE = "https://truehitcloud-production.up.railway.app";
         const LIFF_ID = "2010234920-mLFgwbeb";
         let currentUserId = "anonymous", currentDisplayName = "PLAYER", currentHdcp = 15.0, avgIvr = 0;
-        let currentClub = "IRON", currentIntent = 4, isPressure = false, sessionShots = [];
+        let currentClub = "IRON", currentIntent = 4, isResultMode = false, isPressure = false, sessionShots = [];
 
         async function initLiff() {
             try {
@@ -227,6 +270,7 @@
         async function handleResult(resultId) {
             if (window.navigator.vibrate) window.navigator.vibrate(50);
             sessionShots.push({ club: currentClub, intent: currentIntent, result: resultId, isPressure: isPressure });
+            const aiText = document.getElementById('ai-text');
             try {
                 const response = await fetch(`${API_BASE}/calculate-score`, { 
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, 
@@ -238,26 +282,29 @@
                     avgIvr = parseInt(res.avgIvr);
                     document.getElementById('ivr-display').innerText = `${avgIvr}%`;
                     const thiVal = parseFloat(res.liveThi);
+                    document.getElementById('thi-display').innerText = (thiVal >= 0 ? "+" : "") + res.liveThi;
                     updateHUD(thiVal);
-                    document.getElementById('ai-text').innerText = getDynamicMindsetAdvice(currentClub, currentIntent, resultId, avgIvr, isPressure);
+                    aiText.innerText = getDynamicMindsetAdvice(currentClub, currentIntent, resultId, avgIvr, isPressure);
                 }
-            } catch (err) { document.getElementById('ai-text').innerText = "連線異常，系統已記錄本地數據。"; }
+            } catch (err) { aiText.innerText = "連線異常，系統已記錄本地數據。"; }
             switchLayer(false);
         }
 
         function getDynamicMindsetAdvice(club, intent, result, ivr, pressure) {
-            if (result === 4) return `Pure Strike! 節奏穩定，請守住目前的 Flow。`;
-            if (pressure) return `壓力環境導致變形。請執行「10碼規則」斷開挫折感。`;
-            if (ivr < 75) return `[警示] 同步率下滑。建議瞄準果嶺中心安全區。`;
-            return `執行偏差已量化。請針對 ${club} 重新視覺化目標點。`;
+            const lastTwo = sessionShots.slice(-2);
+            if (result === 4) {
+                if (ivr >= 85) return `[心流狀態] 您目前的同步率極高，身體正高度服從意圖，建議採取積極進攻。`;
+                return `Pure Strike! 節奏非常穩定，請守住目前的 Flow。`;
+            }
+            if (pressure) return `壓力導致程序變形。請執行「10碼規則」：將焦點拉回下一個目標。`;
+            if (ivr < 75) return `[戰術警示] 同步率下滑。執行力呈現漂移，建議瞄準果嶺中心安全區。`;
+            return `執行偏差已量化。建議針對 ${club} 重新視覺化目標點。`;
         }
 
         function updateHUD(val) {
             const d = document.getElementById('thi-display'), s = document.getElementById('thi-status'), c = document.getElementById('thi-container');
-            // 更新 THI 顯示格式為 "+3.5" 或 "-2.1"
-            d.innerText = (val >= 0 ? "+" : "") + val.toFixed(1);
-            if (val >= 0) { s.innerText = "SAVED"; d.className = "font-black text-lime-400 mono"; c.style.borderColor = "#CCFF00"; }
-            else { s.innerText = "LOST"; d.className = "font-black text-[#FF9100] mono"; c.style.borderColor = "#FF9100"; }
+            if (val >= 0) { s.innerText = "SAVED"; d.className = "text-2xl font-black text-lime-400"; c.style.borderColor = "#CCFF00"; }
+            else { s.innerText = "LOST"; d.className = "text-2xl font-black text-[#FF9100]"; c.style.borderColor = "#FF9100"; }
         }
 
         function selectClub(el) { document.querySelectorAll('.club-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); currentClub = el.dataset.key; }
@@ -265,7 +312,21 @@
         async function fetchCloudProfile() { try { const r = await fetch(`${API_BASE}/get-profile/${currentUserId}`); const t = await r.text(); if (r.ok && t) { const d = JSON.parse(t); currentHdcp = parseFloat(d.hdcp); document.getElementById('player-hdcp').innerText = currentHdcp.toFixed(1); } } catch (e) {} }
         function promptHdcpUpdate() { const n = prompt("請輸入差點 (HDCP):", currentHdcp); if (n !== null && !isNaN(n)) { currentHdcp = parseFloat(n); document.getElementById('player-hdcp').innerText = currentHdcp.toFixed(1); updateProfileOnCloud(currentHdcp); } }
         async function updateProfileOnCloud(h) { try { await fetch(`${API_BASE}/update-profile`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ lineUserId: currentUserId, displayName: currentDisplayName, hdcp: h }) }); } catch (e) {} }
-        function startFinalizeFlow() { if (sessionShots.length === 0) return; if (confirm("確定要結算本場球局嗎？")) { document.getElementById('main-ui').style.display = 'none'; document.getElementById('summary-view').style.display = 'flex'; document.getElementById('grand-ai-text').innerText = "戰術分析完成：建議優化下桿節奏，並針對短桿加強距離精準度。"; } }
+        function startFinalizeFlow() { if (sessionShots.length === 0) return; if (confirm("確定要結算本場球局嗎？")) { showSummary(); } }
+
+        function showSummary() {
+            document.getElementById('main-ui').style.display = 'none';
+            document.getElementById('summary-view').style.display = 'flex';
+            let stats = [0,0,0,0,0,0,0,0,0]; sessionShots.forEach(s => stats[s.result]++);
+            const grid = document.getElementById('heatmap-grid'); grid.innerHTML = '';
+            ["","LONG","","LEFT","PERF","RIGHT","","SHORT",""].forEach((l, i) => {
+                const cell = document.createElement('div');
+                cell.className = `summary-grid-cell ${i===4 ? 'hit' : (stats[i]>0 ? 'hit' : '')}`;
+                cell.innerHTML = [1,3,4,5,7].includes(i) ? `<span class="text-xs font-black mono">${stats[i]}</span>` : '';
+                grid.appendChild(cell);
+            });
+            document.getElementById('grand-ai-text').innerText = "戰術分析完成：建議優化下桿節奏，並針對短桿加強距離精準度。";
+        }
         initLiff();
     </script>
 </body>
