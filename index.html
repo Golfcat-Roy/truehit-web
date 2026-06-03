@@ -8,13 +8,11 @@
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
-        /* 定義全域 CSS 變數，方便統一管理高強度霓虹戰術色彩與動態間距 */
+        /* 定義全域 CSS 變數，方便統一管理高強度霓虹戰術色彩 */
         :root {
             --neon-cyan: #00FFFF; /* 科技青色：主要用於意圖鎖定與選手資訊 */
             --neon-orange: #FF9100; /* 警示橘色：用於 AI 區塊、結果與技術偏差提示 */
             --neon-lime: #CCFF00; /* 萊姆綠色：用於 THI 指標穩定度高亮 */
-            --unit-h: 1vh; /* 視窗高度百分之一的自訂單位 */
-            --stack-gap: min(1vh, 6px); /* 全域極小間距，確保元件高度緊密結合 */
         }
 
         /* 定義常規結算按鈕或結果提示的橘色呼吸燈動畫效果 */
@@ -31,7 +29,7 @@
             font-family: 'Inter', sans-serif; /* 預設使用 Inter 字型 */
             overflow: hidden; /* 鎖定畫面，隱藏滾動條，確保完美的單頁式 App 體驗 */
             height: 100vh; /* 高度撐滿整個瀏覽器畫面 */
-            padding: 8px 15px calc(8px + env(safe-area-inset-bottom)); /* 微調上下留白，避開 iOS Home 條安全區域 */
+            padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); /* 四週留白，底部自動避開 iOS Home 條安全區域 */
             display: flex; /* 使用 Flexbox 彈性排版 */
             flex-direction: column; /* 子元素一律由上至下垂直排列 */
             box-sizing: border-box; /* 確保內邊距與邊框不撐大總寬高 */
@@ -40,107 +38,84 @@
 
         /* 類別：將字型切換為 JetBrains Mono 等寬字型，用於對齊數字與指標 */
         .mono { font-family: 'JetBrains Mono', monospace; }
-        /* 類別：將元素強制隱藏，並提高權重 */
+        /* 類別：將元素強制隱藏 */
         .hidden { display: none !important; }
 
-        /* 1. 上方儀表板區塊 (佔 15% 畫面高度) */
+        /* 1. 上方儀表板區塊 (精準限定 15% 高度，防擠壓) */
         .dashboard-row { 
-            height: 15vh; /* 高度固定為視窗的 15% */
-            display: flex; /* 水平排列子元素 */
-            align-items: center; /* 垂直方向置中對齊 */
-            justify-content: space-between; /* 左右對齊，中間留白 */
-            gap: 10px; /* 子元素之間的水平間距 */
-            flex-shrink: 0; /* 防止此區塊被下方爆開的元素擠壓變形 */
-        }
-        /* 儀表板內的數據方塊基礎樣式 */
-        .hud-box {
-            flex: 1; /* 平均分配剩餘的水平空間 */
-            height: 100%; /* 高度完全撐滿父層的 15vh */
-            border-radius: 12px; /* 優雅的圓角化 */
-            display: flex; /* 內部使用彈性排版 */
-            flex-direction: column; /* 內容由上至下垂直排列 */
-            justify-content: center; /* 垂直置中 */
-            align-items: center; /* 水平置中 */
-            padding: 4px; /* 內部微幅留白 */
-            border: 2.5px solid transparent; /* 預設邊框透明，保留位置給動態顏色 */
-        }
-        /* THI 指標容器專屬樣式：使用萊姆綠邊框與微弱的背景色 */
-        #thi-container { border-color: var(--neon-lime); background: rgba(204, 255, 0, 0.05); }
-        /* THI 指標大數字樣式，隨螢幕大小自動在 28px 到 40px 之間彈性縮放 */
-        #thi-display { font-size: clamp(28px, 4.5vh, 40px); line-height: 1; font-weight: 900; margin: 4px 0; }
-        
-        /* 選手資訊方塊專屬樣式：科技青色邊框與半透明背景，支援點擊更新 */
-        .player-box { border-color: var(--neon-cyan); background: rgba(0, 255, 255, 0.1); cursor: pointer; }
-        /* 選手名字字型縮放樣式：粗體加強 */
-        #player-name { font-size: clamp(14px, 2.2vh, 18px); font-weight: 900; }
-        /* 選手差點 (HDCP) 數值字體大小 */
-        #player-hdcp { font-size: clamp(18px, 2.8vh, 24px); }
-
-        /* 正中間圓形 IVR 同步率儀表 */
-        .ivr-indicator { 
-            width: 28vw; height: 28vw; max-width: 15vh; max-height: 15vh; /* 鎖定長寬比，在不同裝置上維持完美正圓形 */
-            border-radius: 50%; border: 6px solid var(--neon-cyan); /* 青色粗邊框圓圈 */
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            background: rgba(0, 255, 255, 0.05); flex-shrink: 0; /* 防止圓形被擠壓變形 */
-        }
-
-        /* 2. AI 教練診斷提示區塊 (佔 15% 畫面高度) */
-        #ai-box { 
-            height: 15vh; /* 高度固定為視窗的 15% */
-            border: 2.5px solid var(--neon-orange); border-left: 10px solid var(--neon-orange); /* 左側加粗，呈現戰術提示卡視覺 */
-            border-radius: 14px; background: linear-gradient(145deg, #1a1000, #000000); /* 質感的黑橘暗化漸層 */
-            display: flex; flex-direction: column; justify-content: center; 
-            padding: 10px 18px; 
-            margin-bottom: var(--stack-gap); /* 僅保留底部微量間距 */
-            overflow: hidden; /* 超出區塊的文字自動隱藏 */
-            box-shadow: 0 4px 20px rgba(255,145,0,0.15); /* 微弱的橘色霓虹發光陰影 */
-            flex-shrink: 0;
-        }
-        /* AI 指導診斷文字的大小與間距設定 */
-        #ai-text { font-size: clamp(15px, 2.5vh, 20px); font-weight: 700; line-height: 1.3; color: #eee; }
-
-        /* 3. 中間控制按鈕與球桿群組 (佔 30% 畫面高度) */
-        .control-stack { 
+            height: 15vh; 
             display: flex; 
-            flex-direction: column; 
-            gap: var(--stack-gap); 
-            height: 30vh; 
+            align-items: center; 
+            justify-content: space-between; 
+            gap: 10px; 
             flex-shrink: 0; 
         }
-        /* 頂部細長字的「結束本場球局與覆盤分析」按鈕 */
-        .finalize-btn { height: 5vh; background: #0a0a0a; border: 1px solid #333; border-radius: 8px; font-size: 9px; color: #555; font-weight: 900; text-transform: uppercase; }
-        /* 核心「壓力模式」切換開關，字體放大且加寬字距 */
-        .pressure-btn { height: 8vh; background: #111; border: 2.5px solid #333; border-radius: 14px; font-size: clamp(14px, 2.2vh, 18px); letter-spacing: 0.3em; font-weight: 900; }
-        /* 當壓力模式被啟用（Active）時的紅色警示樣式與呼吸燈動畫觸發 */
+        .hud-box {
+            flex: 1; height: 100%; border-radius: 12px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 4px; border: 2.5px solid transparent;
+        }
+        #thi-container { border-color: var(--neon-lime); background: rgba(204, 255, 0, 0.05); }
+        #thi-display { font-size: clamp(26px, 4.2vh, 38px); line-height: 1; font-weight: 900; margin: 2px 0; }
+        
+        .player-box { border-color: var(--neon-cyan); background: rgba(0, 255, 255, 0.1); cursor: pointer; }
+        #player-name { font-size: clamp(13px, 2vh, 16px); font-weight: 900; }
+        #player-hdcp { font-size: clamp(16px, 2.5vh, 22px); }
+
+        .ivr-indicator { 
+            width: 26vw; height: 26vw; max-width: 13vh; max-height: 13vh;
+            border-radius: 50%; border: 5px solid var(--neon-cyan); 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            background: rgba(0, 255, 255, 0.05); flex-shrink: 0; 
+        }
+
+        /* 2. AI 教練診斷提示區塊 (精準限定 15% 高度，與頂部 HUD 自動隔開) */
+        .ai-coach-zone { 
+            height: 15vh; 
+            border: 2.5px solid var(--neon-orange); border-left: 10px solid var(--neon-orange); 
+            border-radius: 14px; background: linear-gradient(145deg, #1a1000, #000000); 
+            display: flex; flex-direction: column; justify-content: center; 
+            padding: 8px 16px; 
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(255,145,0,0.12); 
+            flex-shrink: 0;
+        }
+        #ai-text { font-size: clamp(14px, 2.2vh, 18px); font-weight: 700; line-height: 1.35; color: #eee; }
+
+        /* 3. 中間控制按鈕與球桿群組 (精準限定 25% 高度，緊縮內部元件間距) */
+        .control-stack { 
+            height: 25vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; /* 均分垂直空間，建立完美間隙 */
+            flex-shrink: 0; 
+        }
+        .finalize-btn { height: 4vh; background: #0a0a0a; border: 1px solid #333; border-radius: 8px; font-size: 9px; color: #555; font-weight: 900; text-transform: uppercase; }
+        .pressure-btn { height: 7.5vh; background: #111; border: 2.5px solid #333; border-radius: 14px; font-size: clamp(13px, 2vh, 16px); letter-spacing: 0.2em; font-weight: 900; }
         .pressure-btn.active { background: rgba(239, 68, 68, 0.3); border-color: #ef4444; animation: pulse-red 1.5s infinite; }
         
-        /* 球桿選單水平列佈局 */
-        .club-row { height: 10vh; display: flex; gap: 6px; }
-        /* 個別球桿按鈕基本樣式：深邃背景襯托橘色文字 */
+        .club-row { height: 9vh; display: flex; gap: 6px; }
         .club-btn { 
             flex: 1; border: 2px solid #333; border-radius: 10px; 
-            font-size: clamp(12px, 2.2vh, 17px); /* 球桿文字等比放大，方便手動高頻操作 */
+            font-size: clamp(11px, 1.8vh, 15px); 
             font-weight: 900; color: var(--neon-orange); background: #050505; 
         }
-        /* 當前選中的球桿按鈕：轉為高亮青色底色與黑色粗字 */
         .club-btn.active { border-color: var(--neon-cyan); background: var(--neon-cyan); color: #000 !important; }
 
-        /* 4. 九宮格主要操作面板區域 (【強制吸附優化】：加入負向 margin 與絕對高度卡死，徹底移除黑洞間距) */
+        /* 4. 九宮格主要操作面板區域 (精準分配 45% 剩餘高度，強制卡死最大高度防爆版) */
         .grid-container { 
-            flex-grow: 1; 
+            height: 45vh;
+            max-height: 45vh;
             position: relative; 
-            height: 35vh; /* 調配充足的固定視窗佔比 */
             min-height: 0; 
-            margin-top: -2.5vh; /* 【核心修正】：利用負向 Margin 將整個區塊強行向上拉，緊貼球桿按鈕列 */
             display: flex;
             flex-direction: column;
         }
-        /* 操作階段提示條（PHASE A: 選意圖 / PHASE B: 記結果） */
         #status-lamp { 
             height: 4.5vh; 
             border-radius: 8px; 
             font-weight: 900; 
-            margin-bottom: 6px; 
+            margin-bottom: 8px; /* 建立指示燈與九宮格間的黃金比例空隙 */
             font-size: clamp(11px, 1.8vh, 14px); 
             display: flex; 
             align-items: center; 
@@ -148,12 +123,10 @@
             text-align: center;
             flex-shrink: 0;
         }
-        /* 意圖模式下的狀態條樣式：柔和青色調 */
         .lamp-intent { background: rgba(0, 255, 255, 0.25); border: 1.5px solid var(--neon-cyan); color: var(--neon-cyan); }
-        /* 結果記錄模式下的狀態條樣式：高度警示橘色加上呼吸燈閃爍 */
         .lamp-result { background: rgba(255, 145, 0, 0.35); border: 2px solid var(--neon-orange); color: #fff; animation: pulse-orange 1.5s infinite; }
 
-        /* 九宮格佈局圖層，精準定位 */
+        /* 九宮格佈局圖層 */
         .grid-layer { 
             position: absolute; 
             top: 5.5vh; 
@@ -163,40 +136,34 @@
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
             grid-template-rows: repeat(3, 1fr); 
-            gap: 8px; /* 緊緻的九宮格按鈕間距 */
+            gap: 8px; /* 緊緻安全的九宮格網格間距 */
         }
-        /* 單一九宮格格子的基礎樣式 - 具備多重置中防線 */
+        /* 單一九宮格格子的基礎樣式（文字多重絕對置中防護） */
         .grid-cell { 
             border-radius: 14px; 
             display: flex; 
-            flex-direction: column; /* 允許英文多行單字由上至下垂直排列 */
-            align-items: center; /* 強迫 Flex 子元素水平絕對置中 */
-            justify-content: center; /* 強迫 Flex 子元素垂直絕對置中 */
-            text-align: center; /* 強制文字內部區塊置中 */
-            font-size: clamp(13px, 2.3vh, 18px); /* 調降文字上限，防止長英文單字頂到外框 */
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+            font-size: clamp(12px, 2vh, 17px); /* 限制最大字體為 17px，完美防止文字溢位 */
             font-weight: 900; 
             background: #080808; 
             border: 2px solid #2a2a2a; 
             transition: transform 0.1s;
-            line-height: 1.1; /* 緊縮文字行高 */
-            padding: 2px; /* 安全內邊距 */
+            line-height: 1.15; 
+            padding: 4px; 
         }
-        /* 按鈕被按壓時的輕微縮小動態回饋 */
         .grid-cell:active { transform: scale(0.95); }
         
-        /* Phase A 高亮度設計 */
         #intent-layer .grid-cell {
             border: 2.8px solid var(--neon-cyan);
             animation: intent-glow 2s infinite ease-in-out;
         }
         
-        /* 九宮格按鈕處於啟動狀態時的樣式（切換為青色亮底黑字） */
         .grid-cell.active { background: var(--neon-cyan); color: #000 !important; border-color: var(--neon-cyan); animation: none !important; }
-        /* 結果圖層中代表打擊偏差按鈕的樣式（加粗橘框） */
         .grid-cell.result-btn { border-color: var(--neon-orange); border-width: 3px; color: #fff; }
-        /* 正中央完美擊球（PERFECT）按鈕的樣式：黑黃橘流線漸層、不帶邊框、放大字體 */
-        .grid-cell.perfect { background: linear-gradient(135deg, #FF9100, #FF6D00); border: none; color: #000 !important; font-size: 1.2em; }
-        /* 結果圖層不使用的四個角落網格，設定為極低透明度且關閉點擊事件 */
+        .grid-cell.perfect { background: linear-gradient(135deg, #FF9100, #FF6D00); border: none; color: #000 !important; font-size: 1.15em; }
         .grid-cell.disabled { opacity: 0.01; pointer-events: none; }
 
         /* 總結報告覆盤分頁 */
@@ -211,7 +178,7 @@
 
     <div id="loading" class="loading-overlay text-cyan-400 font-bold tracking-widest text-base uppercase">Syncing Master Terminal V8.5...</div>
 
-    <div id="main-ui" class="flex flex-col h-full w-full">
+    <div id="main-ui" class="flex flex-col h-full w-full space-y-[12px]">
         <div class="dashboard-row">
             <div id="thi-container" class="hud-box">
                 <span class="text-zinc-500 text-[8px] font-black uppercase tracking-tighter">THI INDEX</span>
@@ -231,8 +198,8 @@
             </div>
         </div>
 
-        <div id="ai-box">
-            <div id="ai-label" class="text-[#FF9100] text-[10px] font-black uppercase tracking-widest mb-1.5">Diagnostic AI Coach</div>
+        <div id="ai-box" class="ai-coach-zone">
+            <div id="ai-label" class="text-[#FF9100] text-[10px] font-black uppercase tracking-widest mb-1">Diagnostic AI Coach</div>
             <div id="ai-text" class="text-center">系統就緒。請設定擊球意圖。</div>
         </div>
 
@@ -354,6 +321,7 @@
             sessionShots.push({ club: currentClub, intent: currentIntent, result: resultId, isPressure: isPressure });
             const aiText = document.getElementById('ai-text');
             
+            // 0 毫秒即時回饋效果鎖定
             aiText.innerHTML = `<span class="animate-pulse text-[#FF9100] font-black">Master AI 數據分析中...</span>`;
             
             try {
@@ -388,6 +356,7 @@
             if (lastTwo.length === 2 && lastTwo[0].result !== 4 && lastTwo[1].result === lastTwo[0].result) {
                 return `🚨 [慣性連鎖] 連續兩桿出現相同偏差。請立即執行兩次「極慢速空揮」。`;
             }
+            // 方案 A 頂級高爾夫心流暗示語句
             return `[戰術校正] ${club} 數據已記錄。請清空大腦，在腦海中重新畫出下一桿的完美彈道。`;
         }
 
