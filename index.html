@@ -158,8 +158,8 @@
             border-radius: 14px; 
             display: flex; 
             flex-direction: column; /* 允許英文多行單字由上至下垂直排列 */
-            align-items: center; /* 關鍵：強迫 Flex 子元素水平絕對置中 */
-            justify-content: center; /* 關鍵：強迫 Flex 子元素垂直絕對置中 */
+            align-items: center; /* 強迫 Flex 子元素水平絕對置中 */
+            justify-content: center; /* 強迫 Flex 子元素垂直絕對置中 */
             text-align: center; /* 強制文字內部區塊置中 */
             font-size: clamp(13px, 2.3vh, 18px); /* 調降文字上限 (22px -> 18px)，防止長英文單字頂到外框 */
             font-weight: 900; 
@@ -172,7 +172,7 @@
         /* 按鈕被按壓時的輕微縮小動態回饋 */
         .grid-cell:active { transform: scale(0.95); }
         
-        /* Phase A 意圖選擇圖層按鈕的特殊高亮度設計（邊框加粗、常駐發光呼吸燈） */
+        /* Phase A 高亮度設計 */
         #intent-layer .grid-cell {
             border: 2.8px solid var(--neon-cyan);
             animation: intent-glow 2s infinite ease-in-out;
@@ -191,7 +191,7 @@
         #summary-view { background-color: #0d0d0d; position: fixed; inset: 0; z-index: 2000; display: none; flex-direction: column; padding: 25px; overflow-y: auto; }
         /* 結算頁面中十字熱圖（Heatmap）格子的寬高比鎖定為 1:1 正方形 */
         .summary-grid-cell { aspect-ratio: 1/1; border: 1.8px solid #444; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        /* 大總結 Mystery AI 的診斷區塊背景漸層與耀眼橘色左側框 */
+        /* 大總結 Master AI 的診斷區塊背景漸層與耀眼橘色左側框 */
         .grand-ai-box { background: linear-gradient(to right, #1a1000, #000000); border-left: 4px solid #FF9100; padding: 22px; border-radius: 0 16px 16px 0; margin-bottom: 30px; }
         /* 版權聲明過渡加載頁（全螢幕覆蓋，預設隱藏，結算時閃爍登場） */
         #copyright-splash { background-color: #ffffff; color: #000; position: fixed; inset: 0; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px; }
@@ -362,9 +362,14 @@
         async function handleResult(resultId) {
             // 手機震動觸覺回饋：若行動裝置瀏覽器支援，給予 50 毫秒的俐落短震動
             if (window.navigator.vibrate) window.navigator.vibrate(50);
+            
             // 將此桿的全部戰術特徵（球桿種類、意圖、結果、是否處於壓力環境）打包存入本地端歷史陣列
             sessionShots.push({ club: currentClub, intent: currentIntent, result: resultId, isPressure: isPressure });
             const aiText = document.getElementById('ai-text');
+            
+            // 【流暢度最佳化】：在非同步發送 Fetch 請求的前一刻，搶先一步將 AI 卡片文字置換為科技感脈衝動畫「分析中...」
+            aiText.innerHTML = `<span class="animate-pulse text-[#FF9100] font-black">Master AI 數據分析中...</span>`;
+            
             try {
                 // 利用 fetch 以 POST 方法將打擊資料異動上傳至雲端大數據計算引擎
                 const response = await fetch(`${API_BASE}/calculate-score`, { 
@@ -383,7 +388,7 @@
                     // 解析本次打擊計算後所得出的即時 THI (TrueHit Index) 指標數據
                     const thiVal = parseFloat(res.liveThi);
                     updateHUD(thiVal); // 調用更新儀表板顏色與符號的函式
-                    // 根據目前戰術參數，調用大數據大腦，即時更新 AI 教練欄位給予選手的語句
+                    // 雲端回應成功後，將「分析中...」替換成大數據大腦動態診斷出來的教練語句
                     aiText.innerText = getDynamicMindsetAdvice(currentClub, currentIntent, resultId, avgIvr, isPressure);
                 }
             } catch (err) { aiText.innerText = "連線異常，系統已記錄本地數據。"; }
