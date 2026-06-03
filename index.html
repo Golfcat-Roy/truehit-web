@@ -14,7 +14,7 @@
             --neon-orange: #FF9100; /* 警示橘色：用於 AI 區塊、結果與技術偏差提示 */
             --neon-lime: #CCFF00; /* 萊姆綠色：用於 THI 指標穩定度高亮 */
             --unit-h: 1vh; /* 視窗高度百分之一的自訂單位 */
-            --stack-gap: min(1vh, 6px); /* 縮小全域間距，讓元件高度結合更緊密 */
+            --stack-gap: min(1vh, 6px); /* 全域極小間距，確保元件高度緊密結合 */
         }
 
         /* 定義常規結算按鈕或結果提示的橘色呼吸燈動畫效果 */
@@ -106,7 +106,6 @@
             gap: var(--stack-gap); 
             height: 30vh; 
             flex-shrink: 0; 
-            margin-bottom: 4px; /* 【關鍵優化】：強行切斷球桿列跟下方提示燈條的間距，只留 4px 戰術微間距 */
         }
         /* 頂部細長字的「結束本場球局與覆盤分析」按鈕 */
         .finalize-btn { height: 5vh; background: #0a0a0a; border: 1px solid #333; border-radius: 8px; font-size: 9px; color: #555; font-weight: 900; text-transform: uppercase; }
@@ -126,11 +125,13 @@
         /* 當前選中的球桿按鈕：轉為高亮青色底色與黑色粗字 */
         .club-btn.active { border-color: var(--neon-cyan); background: var(--neon-cyan); color: #000 !important; }
 
-        /* 4. 九宮格主要操作面板區域 (【結構修改】：改為 flex-grow 自動填滿剩餘高度，杜絕中間黑洞) */
+        /* 4. 九宮格主要操作面板區域 (【強制吸附優化】：加入負向 margin 與絕對高度卡死，徹底移除黑洞間距) */
         .grid-container { 
             flex-grow: 1; 
             position: relative; 
+            height: 35vh; /* 調配充足的固定視窗佔比 */
             min-height: 0; 
+            margin-top: -2.5vh; /* 【核心修正】：利用負向 Margin 將整個區塊強行向上拉，緊貼球桿按鈕列 */
             display: flex;
             flex-direction: column;
         }
@@ -139,7 +140,7 @@
             height: 4.5vh; 
             border-radius: 8px; 
             font-weight: 900; 
-            margin-bottom: 6px; /* 緊貼下方九宮格面版 */
+            margin-bottom: 6px; 
             font-size: clamp(11px, 1.8vh, 14px); 
             display: flex; 
             align-items: center; 
@@ -152,10 +153,10 @@
         /* 結果記錄模式下的狀態條樣式：高度警示橘色加上呼吸燈閃爍 */
         .lamp-result { background: rgba(255, 145, 0, 0.35); border: 2px solid var(--neon-orange); color: #fff; animation: pulse-orange 1.5s infinite; }
 
-        /* 九宮格佈局圖層，自動適配填滿高度 */
+        /* 九宮格佈局圖層，精準定位 */
         .grid-layer { 
             position: absolute; 
-            top: 5.5vh; /* 順應 status-lamp 高度往下挪 */
+            top: 5.5vh; 
             bottom: 0; 
             left: 0; 
             right: 0; 
@@ -390,7 +391,6 @@
             return `[戰術校正] ${club} 數據已記錄。請清空大腦，在腦海中重新畫出下一桿的完美彈道。`;
         }
 
-        // HUD 數據刷新
         function updateHUD(val) {
             const d = document.getElementById('thi-display'), s = document.getElementById('thi-status'), c = document.getElementById('thi-container');
             d.innerText = (val >= 0 ? "+" : "") + val.toFixed(1);
