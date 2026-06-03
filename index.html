@@ -14,7 +14,7 @@
             --neon-orange: #FF9100; /* 警示橘色：用於 AI 區塊、結果與技術偏差提示 */
             --neon-lime: #CCFF00; /* 萊姆綠色：用於 THI 指標穩定度高亮 */
             --unit-h: 1vh; /* 視窗高度百分之一的自訂單位 */
-            --stack-gap: min(1vh, 6px); /* 【版面優化】：縮小全域間距 (1.5vh/10px -> 1vh/6px)，讓元件高度結合更緊密 */
+            --stack-gap: min(1vh, 6px); /* 縮小全域間距，讓元件高度結合更緊密 */
         }
 
         /* 定義常規結算按鈕或結果提示的橘色呼吸燈動畫效果 */
@@ -91,9 +91,10 @@
             border-radius: 14px; background: linear-gradient(145deg, #1a1000, #000000); /* 質感的黑橘暗化漸層 */
             display: flex; flex-direction: column; justify-content: center; 
             padding: 10px 18px; 
-            margin: var(--stack-gap) 0; /* 縮小與上下區塊的間距 */
+            margin-bottom: var(--stack-gap); /* 僅保留底部微量間距 */
             overflow: hidden; /* 超出區塊的文字自動隱藏 */
             box-shadow: 0 4px 20px rgba(255,145,0,0.15); /* 微弱的橘色霓虹發光陰影 */
+            flex-shrink: 0;
         }
         /* AI 指導診斷文字的大小與間距設定 */
         #ai-text { font-size: clamp(15px, 2.5vh, 20px); font-weight: 700; line-height: 1.3; color: #eee; }
@@ -105,7 +106,7 @@
             gap: var(--stack-gap); 
             height: 30vh; 
             flex-shrink: 0; 
-            margin-bottom: var(--stack-gap); /* 【細節調整】：緊縮球桿按鈕與下方 Phase A 區塊的底部間距 */
+            margin-bottom: 4px; /* 【關鍵優化】：強行切斷球桿列跟下方提示燈條的間距，只留 4px 戰術微間距 */
         }
         /* 頂部細長字的「結束本場球局與覆盤分析」按鈕 */
         .finalize-btn { height: 5vh; background: #0a0a0a; border: 1px solid #333; border-radius: 8px; font-size: 9px; color: #555; font-weight: 900; text-transform: uppercase; }
@@ -125,42 +126,43 @@
         /* 當前選中的球桿按鈕：轉為高亮青色底色與黑色粗字 */
         .club-btn.active { border-color: var(--neon-cyan); background: var(--neon-cyan); color: #000 !important; }
 
-        /* 4. 九宮格主要操作面板區域 (確保不高於 30vh 且絕不爆版超出螢幕) */
+        /* 4. 九宮格主要操作面板區域 (【結構修改】：改為 flex-grow 自動填滿剩餘高度，杜絕中間黑洞) */
         .grid-container { 
             flex-grow: 1; 
             position: relative; 
-            height: 30vh; 
-            max-height: 30vh; /* 強制重申最大高度限制，卡死高度 */
             min-height: 0; 
+            display: flex;
+            flex-direction: column;
         }
         /* 操作階段提示條（PHASE A: 選意圖 / PHASE B: 記結果） */
         #status-lamp { 
-            height: 4vh; /* 縮微提示燈高度，撥出實體高度空間給下方九宮格 */
+            height: 4.5vh; 
             border-radius: 8px; 
             font-weight: 900; 
-            margin-bottom: var(--stack-gap); /* 套用緊縮後的 gap 變數 */
+            margin-bottom: 6px; /* 緊貼下方九宮格面版 */
             font-size: clamp(11px, 1.8vh, 14px); 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             text-align: center;
+            flex-shrink: 0;
         }
         /* 意圖模式下的狀態條樣式：柔和青色調 */
         .lamp-intent { background: rgba(0, 255, 255, 0.25); border: 1.5px solid var(--neon-cyan); color: var(--neon-cyan); }
         /* 結果記錄模式下的狀態條樣式：高度警示橘色加上呼吸燈閃爍 */
         .lamp-result { background: rgba(255, 145, 0, 0.35); border: 2px solid var(--neon-orange); color: #fff; animation: pulse-orange 1.5s infinite; }
 
-        /* 九宮格佈局圖層，利用 CSS Grid 自動切成完美的 3x3 戰術矩陣 */
+        /* 九宮格佈局圖層，自動適配填滿高度 */
         .grid-layer { 
             position: absolute; 
-            top: 4.5vh; 
+            top: 5.5vh; /* 順應 status-lamp 高度往下挪 */
             bottom: 0; 
             left: 0; 
             right: 0; 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
             grid-template-rows: repeat(3, 1fr); 
-            gap: 8px; /* 微幅緊縮間距 (10px -> 8px)，幫底部的 SHORT 按鈕爭取安全空間 */
+            gap: 8px; /* 緊緻的九宮格按鈕間距 */
         }
         /* 單一九宮格格子的基礎樣式 - 具備多重置中防線 */
         .grid-cell { 
@@ -170,13 +172,13 @@
             align-items: center; /* 強迫 Flex 子元素水平絕對置中 */
             justify-content: center; /* 強迫 Flex 子元素垂直絕對置中 */
             text-align: center; /* 強制文字內部區塊置中 */
-            font-size: clamp(13px, 2.3vh, 18px); /* 調降文字上限 (22px -> 18px)，防止長英文單字頂到外框 */
+            font-size: clamp(13px, 2.3vh, 18px); /* 調降文字上限，防止長英文單字頂到外框 */
             font-weight: 900; 
             background: #080808; 
             border: 2px solid #2a2a2a; 
             transition: transform 0.1s;
-            line-height: 1.1; /* 緊縮文字行高，防止文字被多餘空白行高往下推 */
-            padding: 2px; /* 給予微量安全內邊距，防止英文字貼邊 */
+            line-height: 1.1; /* 緊縮文字行高 */
+            padding: 2px; /* 安全內邊距 */
         }
         /* 按鈕被按壓時的輕微縮小動態回饋 */
         .grid-cell:active { transform: scale(0.95); }
@@ -196,15 +198,11 @@
         /* 結果圖層不使用的四個角落網格，設定為極低透明度且關閉點擊事件 */
         .grid-cell.disabled { opacity: 0.01; pointer-events: none; }
 
-        /* 總結報告覆盤分頁（全螢幕覆蓋，預設隱藏，結算後才開啟） */
+        /* 總結報告覆盤分頁 */
         #summary-view { background-color: #0d0d0d; position: fixed; inset: 0; z-index: 2000; display: none; flex-direction: column; padding: 25px; overflow-y: auto; }
-        /* 結算頁面中十字熱圖（Heatmap）格子的寬高比鎖定為 1:1 正方形 */
         .summary-grid-cell { aspect-ratio: 1/1; border: 1.8px solid #444; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        /* 大總結 Master AI 的診斷區塊背景漸層與耀眼橘色左側框 */
         .grand-ai-box { background: linear-gradient(to right, #1a1000, #000000); border-left: 4px solid #FF9100; padding: 22px; border-radius: 0 16px 16px 0; margin-bottom: 30px; }
-        /* 版權聲明過渡加載頁（全螢幕覆蓋，預設隱藏，結算時閃爍登場） */
         #copyright-splash { background-color: #ffffff; color: #000; position: fixed; inset: 0; z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 40px; }
-        /* 網頁剛開啟、進行首度登入同步時的全黑蓋板 Loading 圖層 */
         .loading-overlay { background: #000; position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 10000; }
     </style>
 </head>
@@ -250,7 +248,7 @@
         </div>
 
         <div class="grid-container">
-            <div id="status-lamp" class="lamp-intent">PHASE A: 選擇意圖 (INTENT)</div>
+            <div id="status-lamp" class="lamp-intent">PHASE A: 選擇下一次意圖 (INTENT)</div>
             
             <div id="intent-layer" class="grid-layer">
                 <div class="grid-cell text-center flex items-center justify-center" onclick="handleIntent(0, 'H.Draw')">H.Draw</div>
@@ -313,74 +311,51 @@
     </div>
 
     <script>
-        // 後端雲端運算伺服器的 Railway 主機基底網址
         const API_BASE = "https://truehitcloud-production.up.railway.app";
-        // LINE 官方登錄核發的 LIFF ID，用於建立通道連結
         const LIFF_ID = "2010234920-mLFgwbeb";
-        // 全域核心狀態初始化：使用者唯一代碼、預設名稱、初始球員差點值、平均 IVR 同步率
         let currentUserId = "anonymous", currentDisplayName = "PLAYER", currentHdcp = 15.0, avgIvr = 0;
-        // 運行過程追蹤變數：目前所選球桿、目前選定意圖編號、是否為結果模式、是否為高壓關卡、儲存整場擊球明細的歷史陣列
         let currentClub = "IRON", currentIntent = 4, isResultMode = false, isPressure = false, sessionShots = [];
 
-        // LIFF 前端套件初始化引導異步函式
         async function initLiff() {
             try {
-                // 向 LINE 前端主機發送初始化此 LIFF 專案的請求
                 await liff.init({ liffId: LIFF_ID });
-                // 若使用者並非在 LINE 內置環境開啟，或尚未登入，將引導其彈出 LINE 登入授權介面
                 if (!liff.isLoggedIn()) { liff.login(); } 
                 else {
-                    // 已登入則異步撈取使用者的 LINE Profile 個人基本檔案
                     const profile = await liff.getProfile();
                     currentUserId = profile.userId; currentDisplayName = profile.displayName;
-                    // 將網頁 UI 上對應的 PLAYER 欄位更新為球員的 LINE 官方顯示名字（轉大寫）
                     document.getElementById('player-name').innerText = currentDisplayName.toUpperCase();
-                    // 向 Railway 後端主機發起請求，抓取此名使用者在資料庫中的高爾夫球員設定（如差點）
                     fetchCloudProfile();
                 }
-                // 初始化與 Profile 同步完畢後，隱藏全黑的 loading 讀取蓋板
                 document.getElementById('loading').style.display = 'none';
             } catch (err) { document.getElementById('loading').innerText = "ERROR: " + err.message; }
         }
 
-        // 當玩家點擊 Phase A 九宮格鎖定「擊球意圖」時觸發的事件
         function handleIntent(id, name) { 
-            currentIntent = id; // 記錄當前玩家意圖的九宮格相對位置編號 (0~8)
-            // 將最新的鎖定訊息更新至 AI 教練顯示面板中，提醒球員可以準備出桿
+            currentIntent = id; 
             document.getElementById('ai-text').innerText = `意圖鎖定 [${name}]。請擊球並記錄結果。`; 
-            // 將操作圖層切換至 Phase B 結果填寫圖層
             switchLayer(true); 
         }
 
-        // 控制意圖圖層 (Phase A) 與結果記錄圖層 (Phase B) 互換的 UI 切換邏輯
         function switchLayer(isResult) {
             const iL = document.getElementById('intent-layer'), rL = document.getElementById('result-layer'), lamp = document.getElementById('status-lamp');
             if (isResult) { 
-                // 隱藏意圖選擇格，高亮秀出結果失誤填寫格子，並切換狀態條為橘色 Result 燈號
                 iL.classList.add('hidden'); rL.classList.remove('hidden'); 
                 lamp.innerText = "PHASE B: 記錄結果 (RESULT)"; lamp.className = "lamp-result"; 
             }
             else { 
-                // 隱藏結果記錄，重新把意圖圖層吐回來，並把狀態條還原成青色 Intent 燈號
                 rL.classList.add('hidden'); iL.classList.remove('hidden'); 
                 lamp.innerText = "PHASE A: 選擇下一次意圖 (INTENT)"; lamp.className = "lamp-intent"; 
             }
         }
 
-        // 當玩家出桿完畢，點擊 Phase B 記錄「實際結果方位」時觸發的異步核心通訊函式
         async function handleResult(resultId) {
-            // 手機震動觸覺回饋：若行動裝置瀏覽器支援，給予 50 毫秒的俐落短震動
             if (window.navigator.vibrate) window.navigator.vibrate(50);
-            
-            // 將此桿的全部戰術特徵（球桿種類、意圖、結果、是否處於壓力環境）打包存入本地端歷史陣列
             sessionShots.push({ club: currentClub, intent: currentIntent, result: resultId, isPressure: isPressure });
             const aiText = document.getElementById('ai-text');
             
-            // 【流暢度最佳化】：在非同步發送 Fetch 請求的前一刻，搶先一步將 AI 卡片文字置換為科技感脈衝動畫「分析中...」
             aiText.innerHTML = `<span class="animate-pulse text-[#FF9100] font-black">Master AI 數據分析中...</span>`;
             
             try {
-                // 利用 fetch 以 POST 方法將打擊資料異動上傳至雲端大數據計算引擎
                 const response = await fetch(`${API_BASE}/calculate-score`, { 
                     method: 'POST', headers: { 'Content-Type': 'application/json' }, 
                     body: JSON.stringify({ 
@@ -391,71 +366,56 @@
                 const text = await response.text();
                 if (response.ok && text) {
                     const res = JSON.parse(text);
-                    // 解析並同步更新網頁大圓圈內的最新 IVR (意圖與結果) 同步率百分比數值
                     avgIvr = parseInt(res.avgIvr);
                     document.getElementById('ivr-display').innerText = `${avgIvr}%`;
-                    // 解析本次打擊計算後所得出的即時 THI (TrueHit Index) 指標數據
                     const thiVal = parseFloat(res.liveThi);
-                    updateHUD(thiVal); // 調用更新儀表板顏色與符號的函式
-                    // 雲端回應成功後，將「分析中...」替換成大數據大腦動態診斷出來的教練語句
+                    updateHUD(thiVal); 
                     aiText.innerText = getDynamicMindsetAdvice(currentClub, currentIntent, resultId, avgIvr, isPressure);
                 }
             } catch (err) { aiText.innerText = "連線異常，系統已記錄本地數據。"; }
-            // 完整記錄回傳後，自動將九宮格切回 Phase A，供選手選擇下一桿的擊球意圖
             switchLayer(false);
         }
 
-        // 即時戰術智庫演算邏輯：根據當前的球桿、彈道意圖、實打結果、同步率與高壓狀態，即時回傳一針見血的教練處方語句
         function getDynamicMindsetAdvice(club, intent, result, ivr, pressure) {
-            const lastTwo = sessionShots.slice(-2); // 擷取最後打出的兩桿數據明細
-            if (result === 4) { // 若打出 Perfect 完美一球
+            const lastTwo = sessionShots.slice(-2); 
+            if (result === 4) { 
                 if (ivr >= 85) return `[心流狀態] ${currentDisplayName}，您的同步率極高。目前身體正高度服從意圖，建議採取積極進攻策略。`;
                 return `Pure Strike! 節奏非常穩定，請守住目前的 Flow。`;
             }
             if (pressure) return `壓力環境導致程序變形。請執行「10碼規則」：將焦點拉回下一個目標。`;
             if (ivr < 75) return `[戰術警示] 同步率下滑。目前執行力呈現漂移，建議瞄準果嶺中心安全區。`;
-            // 慣性偏擺失誤連鎖偵測：若連續兩次失誤完全落在同一個九宮格方位（例如連續兩桿都 Miss Left）
             if (lastTwo.length === 2 && lastTwo[0].result !== 4 && lastTwo[1].result === lastTwo[0].result) {
                 return `🚨 [慣性連鎖] 連續兩桿出現相同偏差。請立即執行兩次「極慢速空揮」。`;
             }
-            
-            // 【方案 A 最佳化】：換掉生硬句型，改用更具心理學暗示的高爾夫戰術指令
             return `[戰術校正] ${club} 數據已記錄。請清空大腦，在腦海中重新畫出下一桿的完美彈道。`;
         }
 
-        // 即時刷新更新頂部儀表板的 THI 指標大字與外框燈號顏色
+        // HUD 數據刷新
         function updateHUD(val) {
             const d = document.getElementById('thi-display'), s = document.getElementById('thi-status'), c = document.getElementById('thi-container');
-            // 若為正向加桿數，前方加上 "+" 符號補齊，反之則原樣輸出呈現負數
             d.innerText = (val >= 0 ? "+" : "") + val.toFixed(1);
             if (val >= 0) { 
-                // 表現良好保住桿數：點亮全亮萊姆綠燈，狀態切換為 SAVED
                 s.innerText = "SAVED"; d.className = "font-black text-lime-400 mono"; c.style.borderColor = "#CCFF00"; 
             }
             else { 
-                // 表現失常浪費桿數：點亮警示橘色燈，狀態切換為 LOST
                 s.innerText = "LOST"; d.className = "font-black text-[#FF9100] mono"; c.style.borderColor = "#FF9100"; 
             }
         }
 
-        // 切換選中球桿的選取狀態
         function selectClub(el) { 
-            document.querySelectorAll('.club-btn').forEach(b => b.classList.remove('active')); // 全面清除其他球桿按鈕的高亮狀態
-            el.classList.add('active'); // 為當前點擊的球桿按鈕補上 active 高亮底面樣式
-            currentClub = el.dataset.key; // 將全域變數更新為對應球桿標籤值 (如 DRIVER / IRON)
+            document.querySelectorAll('.club-btn').forEach(b => b.classList.remove('active')); 
+            el.classList.add('active'); 
+            currentClub = el.dataset.key; 
         }
         
-        // 切換與開啟/關閉「高壓模式（模擬比賽關鍵決定性的一桿）」
         function togglePressure() { 
             isPressure = !isPressure; 
             const btn = document.getElementById('pressure-toggle'); 
             btn.classList.toggle('active'); 
-            // 變更按鈕標題上的狀態文字
             btn.innerText = isPressure ? "🔥 PRESSURE MODE: ON" : "🔥 PRESSURE MODE: OFF"; 
-            if (window.navigator.vibrate) window.navigator.vibrate(30); // 輕微的按鍵壓下震動回饋
+            if (window.navigator.vibrate) window.navigator.vibrate(30); 
         }
         
-        // 從 Railway 伺服器端異步獲取並更新該 LINE 使用者的歷史球員差點檔案
         async function fetchCloudProfile() { 
             try { 
                 const r = await fetch(`${API_BASE}/get-profile/${currentUserId}`); 
@@ -463,22 +423,20 @@
                 if (r.ok && t) { 
                     const d = JSON.parse(t); 
                     currentHdcp = parseFloat(d.hdcp); 
-                    document.getElementById('player-hdcp').innerText = currentHdcp.toFixed(1); // 將撈到的差點渲染到介面
+                    document.getElementById('player-hdcp').innerText = currentHdcp.toFixed(1); 
                 } 
             } catch (e) {} 
         }
         
-        // 當選手點擊 HDCP 方塊時，彈出原生 prompt 對話框供手動鍵入修改差點數值
         function promptHdcpUpdate() { 
             const n = prompt("請輸入差點 (HDCP):", currentHdcp); 
             if (n !== null && !isNaN(n)) { 
                 currentHdcp = parseFloat(n); 
-                document.getElementById('player-hdcp').innerText = currentHdcp.toFixed(1); // 立即前端畫面刷新
-                updateProfileOnCloud(currentHdcp); // 調用後端同步儲存異動函式
+                document.getElementById('player-hdcp').innerText = currentHdcp.toFixed(1); 
+                updateProfileOnCloud(currentHdcp); 
             } 
         }
         
-        // 將異動修改後的選手個人差點 profile 更新傳送儲存至雲端資料庫
         async function updateProfileOnCloud(h) { 
             try { 
                 await fetch(`${API_BASE}/update-profile`, { 
@@ -488,64 +446,50 @@
             } catch (e) {} 
         }
         
-        // 觸發最後整場球局大覆盤結算分析的控制流
         function startFinalizeFlow() { 
-            if (sessionShots.length === 0) return; // 若此場次無任何擊球數據，直接忽略
+            if (sessionShots.length === 0) return; 
             if (confirm("確定要結算本場球局嗎？")) { 
-                document.getElementById('copyright-splash').style.display = 'flex'; // 喚醒顯示版權過渡宣傳網底頁面
-                setTimeout(showSummary, 2500); // 刻意延遲 2.5 秒（模擬極致大數據算法分析與過渡視覺動畫），隨後切至總結頁
+                document.getElementById('copyright-splash').style.display = 'flex'; 
+                setTimeout(showSummary, 2500); 
             } 
         }
 
-        // 大數據覆盤診斷與十字熱圖動態生成核心邏輯
         function showSummary() {
-            document.getElementById('copyright-splash').style.display = 'none'; // 卸載隱藏版權過渡頁
-            document.getElementById('summary-view').style.display = 'flex'; // 閃爍揭曉並顯示最終的大總結報表分頁
+            document.getElementById('copyright-splash').style.display = 'none'; 
+            document.getElementById('summary-view').style.display = 'flex'; 
             
-            // 建立長度為 9 且預設皆為 0 的空統計陣列，用以累加統計九宮格各失誤方位的發生次數
             let stats = [0,0,0,0,0,0,0,0,0]; 
-            sessionShots.forEach(s => stats[s.result]++); // 遍歷每桿明細並針對該方位累加計數
+            sessionShots.forEach(s => stats[s.result]++); 
             
-            const grid = document.getElementById('heatmap-grid'); grid.innerHTML = ''; // 徹底清空熱圖 DOM 內原有的結構
+            const grid = document.getElementById('heatmap-grid'); grid.innerHTML = ''; 
             
-            // 定義十字熱圖中上、左、中、右、下的各失誤文字說明標籤
             ["","LONG","","LEFT","PERF","RIGHT","","SHORT",""].forEach((l, i) => {
                 const cell = document.createElement('div');
-                const isCross = [1,3,4,5,7].includes(i); // 判斷是否為十字軸線上的五個有效打擊觀察格子
+                const isCross = [1,3,4,5,7].includes(i); 
                 cell.className = `summary-grid-cell ${i===4 ? 'center-hit' : (stats[i]>0 ? 'hit' : '')}`;
-                if (!isCross) cell.style.opacity = '0.05'; // 四個死角角落不予使用的無效方格切換至近乎透明
-                // 渲染熱圖方塊：上方呈現該失誤方位的累積次數，下方掛載失誤技術說明英文標籤
+                if (!isCross) cell.style.opacity = '0.05'; 
                 cell.innerHTML = !isCross ? '' : `<span class="text-xs font-black mono">${stats[i]}</span><span class="scale-[0.7] font-bold">${l}</span>`;
-                grid.appendChild(cell); // 逐一塞入熱圖雷達 DOM 節點中
+                grid.appendChild(cell); 
             });
             
-            // 進階統計與交叉比對分析今日此回合所有的失誤技術分類總和
             const leftT = sessionShots.filter(s => s.result === 3).length, rightT = sessionShots.filter(s => s.result === 5).length;
             const longT = sessionShots.filter(s => s.result === 1).length, shortT = sessionShots.filter(s => s.result === 7).length;
             const pShots = sessionShots.filter(s => s.isPressure), pFail = pShots.filter(s => s.result !== 4).length;
             
-            // 預設的常規正面大戰報評語語句
             let finalMsg = `今日執行同步率表現穩定。建議維持目前的擊球準備程序，守住目前的戰術心流狀態。`;
             
-            // 終極大腦高爾夫戰術條件分支診斷判定
             if (pShots.length >= 2 && pFail / pShots.length > 0.6) {
-                // 情境一：如果開啟高壓模式大於或等於兩桿，且在壓力下打擊失誤率高達 60% 以上
                 finalMsg = `${currentDisplayName}，壓力模式下執行力跳水。建議諮詢[專業教練]建立擊球儀式感。`;
             } else if (leftT > rightT && leftT > sessionShots.length * 0.35) {
-                // 情境二：若向左偏擺失誤次數明顯壓過向右，且左偏比例突破此場次總桿數的 35% 以上
                 finalMsg = `今日有穩定的「技術性左偏慣性」。建議諮詢[專業教練]優化轉身技術。`;
             } else if (rightT > leftT && rightT > sessionShots.length * 0.35) {
-                // 情境三：若向右偏擺失誤次數明顯壓過向左，且右偏比例突破此場次總桿數的 35% 以上
                 finalMsg = `擊球路徑呈現顯著「由外向內」傾向。建議諮詢[專業教練]優化揮桿平面。`;
             } else if (Math.abs(longT - shortT) > sessionShots.length * 0.35) {
-                // 情境四：若縱向距離控制（打太遠 vs 打太短）的波動差值，霸佔了總桿數的 35% 以上
                 finalMsg = `距離控制波動劇烈。建議諮詢教練確認觸球動能。`;
             }
-            // 將客製化深度診斷出的戰術分析文字回傳塞入大處方箋標籤中
             document.getElementById('grand-ai-text').innerText = finalMsg;
         }
         
-        // 當網頁完全解析加載完畢後，立即在背景啟動 LINE LIFF 初始化管道
         initLiff();
     </script>
 </body>
